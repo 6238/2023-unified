@@ -6,8 +6,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.Timer;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. Runs the motors with
@@ -21,17 +24,17 @@ public class Robot extends TimedRobot {
   private final WPI_TalonFX talonRightFollowerOne = new WPI_TalonFX(Constants.RIGHT_FOLLOWER_ID_ONE);
   private final WPI_TalonFX talonRightFollowerTwo = new WPI_TalonFX(Constants.RIGHT_FOLLOWER_ID_TWO);
   private final DifferentialDrive robotDrive = new DifferentialDrive(talonLeftLeader, talonRightLeader);
+  private final Timer timer = new Timer();
   private final Joystick stick = new Joystick(0);
+
+  private final double kCountsPerRev = 2048;
+  private final double kGearRatio = 20;
+  private final double kWheelRadiusInches = 3;
 
   private double speed;
   private double rotation;
-
-  private long startTime;
-  private long timeLimit = 1000;
-  public void setDrive(double speed, double rotation) {
-    this.speed = speed;
-    this.rotation = rotation;
-  }
+  private int PID_ID = 0;
+  private double timeLimit = 1;
 
   @Override
   public void robotInit() {
@@ -45,9 +48,6 @@ public class Robot extends TimedRobot {
     talonLeftLeader.setInverted(true);
     talonLeftFollowerOne.setInverted(true);
     talonLeftFollowerTwo.setInverted(true);
-
-    startTime = System.currentTimeMillis();
-    // setDrive(1,0);
   }
 
   @Override
@@ -58,35 +58,54 @@ public class Robot extends TimedRobot {
     robotDrive.arcadeDrive(-stick.getY(), -stick.getX());
   }
 
-  // @Override
-  // public void periodic() {
-  //   long timeElapsed = System.currentTimeMillis() - startTime;
+  @Override 
+  public void autonomousInit() {
+    timer.reset();
+    timer.start();
+  }
 
-  //   robotDrive.arcadeDrive(-speed, -rotation);
-  //   SmartDashboard.putNumber("DriveSpeed", -speed);
-  //   SmartDashboard.putNumber("DriveRotation", rotation);
+  @Override
+  public void autonomousPeriodic() {
+    double time = timer.get();
 
-  //   SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-  //   SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+    robotDrive.arcadeDrive(-speed, -rotation);
+    SmartDashboard.putNumber("DriveSpeed", -speed);
+    SmartDashboard.putNumber("DriveRotation", rotation);
 
-  //   SmartDashboard.putNumber("distanceDriven", getPosition());
-  //   if(timeElapsed > timeLimit/2) {
-  //     speed = -1
-  //   } else {
-  //     speed = 0;
-  //   }
-  //   rotation = 0;
-  // }
+    SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+    SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
 
-  // @Override
-  // public boolean isFinished() {
-  //   long timeElapsed = System.currentTimeMillis() - startTime;
-  //   return timeElapsed > timeLimit;
-  // }
+    SmartDashboard.putNumber("distanceDriven", getPosition());
+    if(time < timeLimit/2) {
+      speed = 1;
+    } else if(time < timeLimit) {
+      speed = -1;
+    } else {
+      speed = 0;
+      System.out.println("Done!");
+    }
+    rotation = 0;
+    setDrive(speed, rotation);
+  }
 
-  // @Override
-  // public void end(boolean interrupted) {
-  //     drive.setDrive(0,0);
-  //     System.out.println("Done!");
-  // }
+  public double getPosition() {
+    double position = 
+    nativeUnitsToDistanceMeters(
+        talonLeftLeader.getSelectedSensorPosition() / 2
+        + talonRightLeader.getSelectedSensorPosition() / 2);
+    return position;
+  }
+
+  private double nativeUnitsToDistanceMeters(double sensorCounts){
+    double motorRotations = sensorCounts / kCountsPerRev;
+    double wheelRotations = motorRotations / kGearRatio;
+    double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+
+    return positionMeters * 2.5106;
+  }
+
+  public void setDrive(double speed, double rotation) {
+    this.speed = speed;
+    this.rotation = rotation;
+  }
 }
