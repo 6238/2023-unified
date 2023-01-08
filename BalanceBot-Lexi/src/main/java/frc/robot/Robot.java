@@ -7,9 +7,6 @@ package frc.robot;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 /**
@@ -29,9 +26,8 @@ public class Robot extends TimedRobot {
   private double speed;
   private double rotation;
 
-  private int startTime;
-  private int timeLimit = 1000;
-
+  private long startTime;
+  private long timeLimit = 1000;
   public void setDrive(double speed, double rotation) {
     this.speed = speed;
     this.rotation = rotation;
@@ -50,8 +46,8 @@ public class Robot extends TimedRobot {
     talonLeftFollowerOne.setInverted(true);
     talonLeftFollowerTwo.setInverted(true);
 
-    startTime = new 
-    setDrive(1,0);
+    startTime = System.currentTimeMillis();
+    // setDrive(1,0);
   }
 
   @Override
@@ -62,34 +58,35 @@ public class Robot extends TimedRobot {
     robotDrive.arcadeDrive(-stick.getY(), -stick.getX());
   }
 
-  @Override
-  public void periodic() {
-    long timeElapsed = System.currentTimeMillis() - startTime;
+  // @Override
+  // public void periodic() {
+  //   long timeElapsed = System.currentTimeMillis() - startTime;
 
-    robotDrive.arcadeDrive(-speed, -rotation);
-    SmartDashboard.putNumber("DriveSpeed", -speed);
-    SmartDashboard.putNumber("DriveRotation", rotation);
+  //   robotDrive.arcadeDrive(-speed, -rotation);
+  //   SmartDashboard.putNumber("DriveSpeed", -speed);
+  //   SmartDashboard.putNumber("DriveRotation", rotation);
 
-    SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-    SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+  //   SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+  //   SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
 
-    SmartDashboard.putNumber("distanceDriven", getPosition());
-    if(timeElapsed > timeLimit/2) {
-      speed = -1
-    } else {
-      speed = 0;
-    }
-    rotation = 0;
-  }
+  //   SmartDashboard.putNumber("distanceDriven", getPosition());
+  //   if(timeElapsed > timeLimit/2) {
+  //     speed = -1
+  //   } else {
+  //     speed = 0;
+  //   }
+  //   rotation = 0;
+  // }
 
-  @Override
-  public boolean isFinished() {
-    long timeElapsed = System.currentTimeMillis() - startTime;
-    return timeElapsed > timeLimit;
-  }
+  // @Override
+  // public boolean isFinished() {
+  //   long timeElapsed = System.currentTimeMillis() - startTime;
+  //   return timeElapsed > timeLimit;
+  // }
 
-  @Override
-  public void end(boolean interrupted) {
-      drive.setDrive(0,0);
-      System.out.println("Done!");
-  }
+  // @Override
+  // public void end(boolean interrupted) {
+  //     drive.setDrive(0,0);
+  //     System.out.println("Done!");
+  // }
+}
