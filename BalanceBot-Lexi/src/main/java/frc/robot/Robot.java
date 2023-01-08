@@ -56,6 +56,13 @@ public class Robot extends TimedRobot {
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
     robotDrive.arcadeDrive(-stick.getY(), -stick.getX());
+    SmartDashboard.putNumber("DriveSpeed", -speed);
+    SmartDashboard.putNumber("DriveRotation", rotation);
+
+    SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+    SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+
+    SmartDashboard.putNumber("distanceDriven", getPosition());
   }
 
   @Override 
@@ -68,14 +75,6 @@ public class Robot extends TimedRobot {
   public void autonomousPeriodic() {
     double time = timer.get();
 
-    robotDrive.arcadeDrive(-speed, -rotation);
-    SmartDashboard.putNumber("DriveSpeed", -speed);
-    SmartDashboard.putNumber("DriveRotation", rotation);
-
-    SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-    SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-
-    SmartDashboard.putNumber("distanceDriven", getPosition());
     if(time < timeLimit/2) {
       speed = 1;
     } else if(time < timeLimit) {
@@ -85,7 +84,15 @@ public class Robot extends TimedRobot {
       System.out.println("Done!");
     }
     rotation = 0;
-    setDrive(speed, rotation);
+
+    robotDrive.arcadeDrive(-speed, -rotation);
+    SmartDashboard.putNumber("DriveSpeed", -speed);
+    SmartDashboard.putNumber("DriveRotation", rotation);
+
+    SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+    SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+
+    SmartDashboard.putNumber("distanceDriven", getPosition());
   }
 
   public double getPosition() {
@@ -102,10 +109,5 @@ public class Robot extends TimedRobot {
     double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
 
     return positionMeters * 2.5106;
-  }
-
-  public void setDrive(double speed, double rotation) {
-    this.speed = speed;
-    this.rotation = rotation;
   }
 }
