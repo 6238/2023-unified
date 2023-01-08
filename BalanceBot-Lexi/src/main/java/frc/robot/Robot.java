@@ -55,7 +55,16 @@ public class Robot extends TimedRobot {
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
-    robotDrive.arcadeDrive(-stick.getY(), stick.getX());
+    double speed = stick.getY();
+    if (speed > .05){
+        speed = speed * .65 + .35;
+    } else if (speed < -.05) {
+        speed = speed * .65 - .35;
+    } else {
+        speed = 0;
+    }
+
+    robotDrive.arcadeDrive(-speed, stick.getX());
     SmartDashboard.putNumber("DriveSpeed", -speed);
     SmartDashboard.putNumber("DriveRotation", rotation);
 
