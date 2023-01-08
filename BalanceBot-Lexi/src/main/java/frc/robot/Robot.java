@@ -34,7 +34,7 @@ public class Robot extends TimedRobot {
   private double speed;
   private double rotation;
   private int PID_ID = 0;
-  private double timeLimit = 1;
+  private double timeLimit = 3;
 
   @Override
   public void robotInit() {
@@ -55,7 +55,7 @@ public class Robot extends TimedRobot {
     // Drive with arcade drive.
     // That means that the Y axis drives forward
     // and backward, and the X turns left and right.
-    robotDrive.arcadeDrive(-stick.getY(), -stick.getX());
+    robotDrive.arcadeDrive(-stick.getY(), stick.getX());
     SmartDashboard.putNumber("DriveSpeed", -speed);
     SmartDashboard.putNumber("DriveRotation", rotation);
 
@@ -71,21 +71,25 @@ public class Robot extends TimedRobot {
     timer.start();
   }
 
+
+  //a little startup time needed (0.25?)
+  //needs a little time to switch directions if going fast
   @Override
   public void autonomousPeriodic() {
     double time = timer.get();
 
     if(time < timeLimit/2) {
-      speed = 1;
-    } else if(time < timeLimit) {
-      speed = -1;
+      speed = 0.4;
+    } else if(time < timeLimit/2+0.1) {
+      speed = 0;
+    }else if(time < timeLimit) {
+      speed = -0.4;
     } else {
       speed = 0;
-      System.out.println("Done!");
     }
     rotation = 0;
 
-    robotDrive.arcadeDrive(-speed, -rotation);
+    robotDrive.arcadeDrive(speed, rotation);
     SmartDashboard.putNumber("DriveSpeed", -speed);
     SmartDashboard.putNumber("DriveRotation", rotation);
 
