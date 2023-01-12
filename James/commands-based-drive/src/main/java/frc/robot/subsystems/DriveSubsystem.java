@@ -8,7 +8,6 @@ import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -27,6 +26,10 @@ public class DriveSubsystem extends SubsystemBase {
 	);
 
 	private final DifferentialDrive drive = new DifferentialDrive(left, right);
+
+	public DriveSubsystem() {
+		left.setInverted(true);
+	}
 
 	public void arcadeDrive(double rot, double fwd) {
 		drive.arcadeDrive(rot, fwd);

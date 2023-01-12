@@ -27,7 +27,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
         driveSubsystem.setDefaultCommand(
-            Commands.run(() -> driveSubsystem.arcadeDrive(joystick.getY(), joystick.getX()))
+            Commands.run(() -> driveSubsystem.arcadeDrive(joystick.getY(), joystick.getX()), driveSubsystem)
         );
     }
   
