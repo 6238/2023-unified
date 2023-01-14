@@ -4,15 +4,14 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
-
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -108,6 +107,10 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
+        SmartDashboard.putNumber("X Position", getPose().getX());
+        SmartDashboard.putNumber("Y Position", getPose().getY());
+        SmartDashboard.putNumber("Angle Position", getPose().getRotation().getDegrees());
+
 		talonLeftLeader.setVoltage(leftVolts);
 		talonRightLeader.setVoltage(rightVolts);
 		robotDrive.feed();
