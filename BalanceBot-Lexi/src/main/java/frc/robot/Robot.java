@@ -4,123 +4,171 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
 /**
  * This is a demo program showing the use of the DifferentialDrive class. Runs the motors with
  * arcade steering.
  */
 public class Robot extends TimedRobot {
-  private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
-  private final WPI_TalonFX talonLeftFollowerOne = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_ONE);
-  private final WPI_TalonFX talonLeftFollowerTwo = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_TWO);
-  private final WPI_TalonFX talonRightLeader = new WPI_TalonFX(Constants.RIGHT_LEADER_ID);
-  private final WPI_TalonFX talonRightFollowerOne = new WPI_TalonFX(Constants.RIGHT_FOLLOWER_ID_ONE);
-  private final WPI_TalonFX talonRightFollowerTwo = new WPI_TalonFX(Constants.RIGHT_FOLLOWER_ID_TWO);
-  private final DifferentialDrive robotDrive = new DifferentialDrive(talonLeftLeader, talonRightLeader);
-  private final Timer timer = new Timer();
-  private final Joystick stick = new Joystick(0);
+  private Command m_autonomousCommand;
+  private RobotContainer m_robotContainer;
 
-  private final double kCountsPerRev = 2048;
-  private final double kGearRatio = 20;
-  private final double kWheelRadiusInches = 3;
-
-  private double speed;
-  private double rotation;
-  private int PID_ID = 0;
-  private double timeLimit = 3;
-
+  /**
+   * This function is run when the robot is first started up and should be used for any
+   * initialization code.
+   */
   @Override
   public void robotInit() {
-    // We need to invert one side of the drivetrain so that positive voltages
-    // result in both sides moving forward. Depending on how your robot's
-    // gearbox is constructed, you might have to invert the left side instead.
-    talonLeftFollowerOne.follow(talonLeftLeader);
-    talonLeftFollowerTwo.follow(talonLeftLeader);
-    talonRightFollowerOne.follow(talonRightLeader);
-    talonRightFollowerTwo.follow(talonRightLeader);
-    talonLeftLeader.setInverted(true);
-    talonLeftFollowerOne.setInverted(true);
-    talonLeftFollowerTwo.setInverted(true);
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // autonomous chooser on the dashboard.
+    m_robotContainer = new RobotContainer();
   }
+
+  /**
+   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * SmartDashboard integrated updating.
+   */
+  @Override
+  public void robotPeriodic() {
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // block in order for anything in the Command-based framework to work.
+    CommandScheduler.getInstance().run();
+  }
+
+  /** This function is called once each time the robot enters Disabled mode. */
+  @Override
+  public void disabledInit() {}
 
   @Override
-  public void teleopPeriodic() {
-    // Drive with arcade drive.
-    // That means that the Y axis drives forward
-    // and backward, and the X turns left and right.
-    double speed = stick.getY();
-    if (speed > .05){
-        speed = speed * .65 + .35;
-    } else if (speed < -.05) {
-        speed = speed * .65 - .35;
-    } else {
-        speed = 0;
-    }
+  public void disabledPeriodic() {}
 
-    robotDrive.arcadeDrive(-speed, stick.getX());
-    SmartDashboard.putNumber("DriveSpeed", -speed);
-    SmartDashboard.putNumber("DriveRotation", rotation);
-
-    SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-    SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-
-    SmartDashboard.putNumber("distanceDriven", getPosition());
-  }
-
-  @Override 
+  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
+  @Override
   public void autonomousInit() {
-    timer.reset();
-    timer.start();
-  }
+    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
 
-
-  //a little startup time needed (0.25?)
-  //needs a little time to switch directions if going fast
-  @Override
-  public void autonomousPeriodic() {
-    double time = timer.get();
-
-    if(time < timeLimit/2) {
-      speed = 0.4;
-    } else if(time < timeLimit/2+0.1) {
-      speed = 0;
-    }else if(time < timeLimit) {
-      speed = -0.4;
-    } else {
-      speed = 0;
+    // schedule the autonomous command (example)
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.schedule();
     }
-    rotation = 0;
-
-    robotDrive.arcadeDrive(speed, rotation);
-    SmartDashboard.putNumber("DriveSpeed", -speed);
-    SmartDashboard.putNumber("DriveRotation", rotation);
-
-    SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-    SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-
-    SmartDashboard.putNumber("distanceDriven", getPosition());
   }
 
-  public double getPosition() {
-    double position = 
-    nativeUnitsToDistanceMeters(
-        talonLeftLeader.getSelectedSensorPosition() / 2
-        + talonRightLeader.getSelectedSensorPosition() / 2);
-    return position;
+  /** This function is called periodically during autonomous. */
+  @Override
+  public void autonomousPeriodic() {}
+
+  @Override
+  public void teleopInit() {
+    // This makes sure that the autonomous stops running when
+    // teleop starts running. If you want the autonomous to
+    // continue until interrupted by another command, remove
+    // this line or comment it out.
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
+    }
   }
 
-  private double nativeUnitsToDistanceMeters(double sensorCounts){
-    double motorRotations = sensorCounts / kCountsPerRev;
-    double wheelRotations = motorRotations / kGearRatio;
-    double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+  /** This function is called periodically during operator control. */
+  @Override
+  public void teleopPeriodic() {}
 
-    return positionMeters * 2.5106;
+  @Override
+  public void testInit() {
+    // Cancels all running commands at the start of test mode.
+    CommandScheduler.getInstance().cancelAll();
   }
+
+  /** This function is called periodically during test mode. */
+  @Override
+  public void testPeriodic() {}
+
+  /** This function is called once when the robot is first started up. */
+  @Override
+  public void simulationInit() {}
+
+  /** This function is called periodically whilst in simulation. */
+  @Override
+  public void simulationPeriodic() {}
 }
+
+
+
+  // @Override
+  // public void robotInit() {
+  //   // We need to invert one side of the drivetrain so that positive voltages
+  //   // result in both sides moving forward. Depending on how your robot's
+  //   // gearbox is constructed, you might have to invert the left side instead.
+  //   talonLeftFollowerOne.follow(talonLeftLeader);
+  //   talonLeftFollowerTwo.follow(talonLeftLeader);
+  //   talonRightFollowerOne.follow(talonRightLeader);
+  //   talonRightFollowerTwo.follow(talonRightLeader);
+  //   talonLeftLeader.setInverted(true);
+  //   talonLeftFollowerOne.setInverted(true);
+  //   talonLeftFollowerTwo.setInverted(true);
+  // }
+
+  // @Override
+  // public void teleopPeriodic() {
+  //   // Drive with arcade drive.
+  //   // That means that the Y axis drives forward
+  //   // and backward, and the X turns left and right.
+  //   double speed = stick.getY();
+  //   if (speed > .05){
+  //       speed = speed * .65 + .35;
+  //   } else if (speed < -.05) {
+  //       speed = speed * .65 - .35;
+  //   } else {
+  //       speed = 0;
+  //   }
+
+  //   robotDrive.arcadeDrive(-speed, stick.getX());
+  //   SmartDashboard.putNumber("DriveSpeed", -speed);
+  //   SmartDashboard.putNumber("DriveRotation", rotation);
+
+  //   SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+  //   SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+
+  //   SmartDashboard.putNumber("distanceDriven", getPosition());
+  // }
+
+  // @Override 
+  // public void autonomousInit() {
+  //   timer.reset();
+  //   timer.start();
+  // }
+
+
+  // //a little startup time needed (0.25?)
+  // //needs a little time to switch directions if going fast
+  // @Override
+  // public void autonomousPeriodic() {
+  //   double time = timer.get();
+
+  //   if(time < timeLimit/2) {
+  //     speed = 0.4;
+  //   } else if(time < timeLimit/2+0.1) {
+  //     speed = 0;
+  //   }else if(time < timeLimit) {
+  //     speed = -0.4;
+  //   } else {
+  //     speed = 0;
+  //   }
+  //   rotation = 0;
+
+  //   robotDrive.arcadeDrive(speed, rotation);
+  //   SmartDashboard.putNumber("DriveSpeed", -speed);
+  //   SmartDashboard.putNumber("DriveRotation", rotation);
+
+  //   SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+  //   SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
+
+  //   SmartDashboard.putNumber("distanceDriven", getPosition());
+  // }
