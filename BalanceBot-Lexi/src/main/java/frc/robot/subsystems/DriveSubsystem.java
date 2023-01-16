@@ -25,7 +25,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final double kCountsPerRev = 2048;
   	private final double kGearRatio = 20;
-  	private final double kWheelRadiusInches = 3;
+  	private final double kWheelRadiusInches = 2.75;
 
 	private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
     private final WPI_TalonFX talonLeftFollowerOne = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_ONE);
@@ -47,11 +47,13 @@ public class DriveSubsystem extends SubsystemBase {
         isBraking = true;
         talonLeftFollowerOne.follow(talonLeftLeader);
         talonLeftFollowerTwo.follow(talonLeftLeader);
+
         talonRightFollowerOne.follow(talonRightLeader);
         talonRightFollowerTwo.follow(talonRightLeader);
-        talonLeftLeader.setInverted(true);
-        talonLeftFollowerOne.setInverted(true);
-        talonLeftFollowerTwo.setInverted(true);
+
+        talonRightLeader.setInverted(true);
+        talonRightFollowerOne.setInverted(true);
+        talonRightFollowerTwo.setInverted(true);
 
         talonLeftLeader.setNeutralMode(NeutralMode.Brake);
         talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
@@ -79,10 +81,16 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		m_odometry.update(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorPosition()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorPosition()));
+		SmartDashboard.putNumber("X Position", getPose().getX());
+        SmartDashboard.putNumber("Y Position", getPose().getY());
+        SmartDashboard.putNumber("Angle Position", getPose().getRotation().getDegrees());
+		SmartDashboard.putNumber("X Position Graph", getPose().getX());
+		SmartDashboard.putNumber("Y Position Graph", getPose().getY());
+        SmartDashboard.putNumber("Angle Position Graph", getPose().getRotation().getDegrees());
 	}
 
-	public void arcadeDrive(double rot, double fwd) {
-		robotDrive.arcadeDrive(rot, fwd);
+	public void arcadeDrive(double fwd, double rot) {
+		robotDrive.arcadeDrive(fwd, -rot);
 	}
 
 	private double nativeUnitsToDistanceMeters(double sensorCounts){
@@ -107,10 +115,9 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
-        SmartDashboard.putNumber("X Position", getPose().getX());
-        SmartDashboard.putNumber("Y Position", getPose().getY());
-        SmartDashboard.putNumber("Angle Position", getPose().getRotation().getDegrees());
-
+		SmartDashboard.putNumber("Right Volts - Left Volts", rightVolts - leftVolts);
+		SmartDashboard.putNumber("Right Volts", rightVolts);
+		SmartDashboard.putNumber("Left Volts",leftVolts);
 		talonLeftLeader.setVoltage(leftVolts);
 		talonRightLeader.setVoltage(rightVolts);
 		robotDrive.feed();
@@ -131,6 +138,7 @@ public class DriveSubsystem extends SubsystemBase {
 	  }	
 
 	public void resetEncoders() {
+		
 		talonLeftLeader.setSelectedSensorPosition(0);
 		talonRightLeader.setSelectedSensorPosition(0);
 	}

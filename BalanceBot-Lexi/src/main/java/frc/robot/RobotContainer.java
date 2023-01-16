@@ -13,11 +13,13 @@ import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryConfig;
 import edu.wpi.first.math.trajectory.TrajectoryGenerator;
 import edu.wpi.first.math.trajectory.constraint.DifferentialDriveVoltageConstraint;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
@@ -40,7 +42,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
         m_robotDrive.setDefaultCommand(
-            Commands.run(() -> m_robotDrive.arcadeDrive(joystick.getY(), joystick.getX()), m_robotDrive)
+            Commands.run(() -> m_robotDrive.arcadeDrive(-joystick.getY(), joystick.getX()), m_robotDrive)
         );
     }
   
@@ -65,6 +67,10 @@ public class RobotContainer {
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
+       // double distanceSetPoint = SmartDashboard.getNumber("Distance Set Point", 1);
+       // SmartDashboard.putNumber("Distance Set Point", distanceSetPoint);
+       // distanceSetPoint = SmartDashboard.getNumber("Distance Set Point", 1);
+
         Trajectory exampleTrajectory =
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
@@ -77,7 +83,9 @@ public class RobotContainer {
             config);
         
         m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-        m_robotDrive.resetEncoders();
+        System.out.println("Initial X Position: " + m_robotDrive.getPose().getX());
+        System.out.println("Initial Y Position: " + m_robotDrive.getPose().getY());
+        System.out.println("Initial Angle Position: " + m_robotDrive.getPose().getRotation().getDegrees());
 
         RamseteCommand ramseteCommand = new RamseteCommand(
             exampleTrajectory,
@@ -95,6 +103,7 @@ public class RobotContainer {
             m_robotDrive::tankDriveVolts,
             m_robotDrive);
         
-        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
+         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
+       // return Commands.run(() -> m_robotDrive.arcadeDrive(0.8, 0), m_robotDrive);
     }
 }
