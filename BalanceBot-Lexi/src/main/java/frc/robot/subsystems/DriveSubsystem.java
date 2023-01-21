@@ -23,10 +23,6 @@ import frc.robot.SmartDashboardParam;
 public class DriveSubsystem extends SubsystemBase {
 	private final SmartDashboardParam currentLimit = new SmartDashboardParam("currentLimiter", 16); // 0.18
 
-	private final double kCountsPerRev = 2048;
-  	private final double kGearRatio = 20;
-  	private final double kWheelRadiusInches = 3;
-
 	private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
     private final WPI_TalonFX talonLeftFollowerOne = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_ONE);
     private final WPI_TalonFX talonLeftFollowerTwo = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_TWO);
@@ -86,9 +82,9 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	private double nativeUnitsToDistanceMeters(double sensorCounts){
-        double motorRotations = sensorCounts / kCountsPerRev;
-        double wheelRotations = motorRotations / kGearRatio;
-        double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+        double motorRotations = sensorCounts / Constants.kCountsPerRev;
+        double wheelRotations = motorRotations / Constants.kGearRatio;
+        double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.kWheelRadiusInches));
 
         return positionMeters * 2.5106;
     }
