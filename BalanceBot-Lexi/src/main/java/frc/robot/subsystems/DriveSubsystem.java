@@ -155,6 +155,10 @@ public class DriveSubsystem extends SubsystemBase {
 		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition();
 	}
 
+	public double getPitch() {
+		return ahrs.getPitch();
+	}
+
 	public void zeroGyroAngle() {
         ahrs.zeroYaw();
     }

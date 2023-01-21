@@ -22,7 +22,9 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PIDCommand;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -46,7 +48,11 @@ public class RobotContainer {
         );
     }
   
-    private void configureBindings() {}
+    private void configureBindings() {
+        new JoystickButton(joystick, Constants.BalanceRobotBttn)
+            .whileTrue(new BalanceCommand(m_robotDrive)
+            );
+    }
   
     public Command getAutonomousCommand() {
         var autoVoltageConstraint =
@@ -100,11 +106,6 @@ public class RobotContainer {
 
         m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
 
-        System.out.println("Initial X Position: " + m_robotDrive.getPose().getX());
-        System.out.println("Initial Y Position: " + m_robotDrive.getPose().getY());
-        System.out.println("Initial Angle Position: " + m_robotDrive.getPose().getRotation().getDegrees());
-        
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
-       // return Commands.run(() -> m_robotDrive.arcadeDrive(0.8, 0), m_robotDrive);
     }
 }
