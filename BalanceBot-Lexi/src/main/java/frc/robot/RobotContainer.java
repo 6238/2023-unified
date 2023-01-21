@@ -78,14 +78,9 @@ public class RobotContainer {
             // Pass through these two interior waypoints, making an 's' curve path
             List.of(),//new Translation2d(1, 1), new Translation2d(2, -1)),
             // End 1 meter straight ahead of where we started, facing forward
-            new Pose2d(2, 0, new Rotation2d(0)),
+            new Pose2d(0.5, 0, new Rotation2d(0)),
             // Pass config
             config);
-        
-        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
-        System.out.println("Initial X Position: " + m_robotDrive.getPose().getX());
-        System.out.println("Initial Y Position: " + m_robotDrive.getPose().getY());
-        System.out.println("Initial Angle Position: " + m_robotDrive.getPose().getRotation().getDegrees());
 
         RamseteCommand ramseteCommand = new RamseteCommand(
             exampleTrajectory,
@@ -102,8 +97,14 @@ public class RobotContainer {
             // RamseteCommand passes volts to the callback
             m_robotDrive::tankDriveVolts,
             m_robotDrive);
+
+        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+
+        System.out.println("Initial X Position: " + m_robotDrive.getPose().getX());
+        System.out.println("Initial Y Position: " + m_robotDrive.getPose().getY());
+        System.out.println("Initial Angle Position: " + m_robotDrive.getPose().getRotation().getDegrees());
         
-         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
+        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
        // return Commands.run(() -> m_robotDrive.arcadeDrive(0.8, 0), m_robotDrive);
     }
 }

@@ -6,12 +6,14 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -34,6 +36,9 @@ public class DriveSubsystem extends SubsystemBase {
     private final WPI_TalonFX talonRightFollowerOne = new WPI_TalonFX(Constants.RIGHT_FOLLOWER_ID_ONE);
     private final WPI_TalonFX talonRightFollowerTwo = new WPI_TalonFX(Constants.RIGHT_FOLLOWER_ID_TWO);
 	private final DifferentialDrive robotDrive = new DifferentialDrive(talonLeftLeader, talonRightLeader);
+
+	private double leftEncoderOffset = talonLeftLeader.getSelectedSensorPosition();
+	private double rightEncoderOffset = talonRightLeader.getSelectedSensorPosition();
 
 	private final AHRS ahrs = new AHRS(SPI.Port.kMXP);
 
@@ -80,7 +85,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		m_odometry.update(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorPosition()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorPosition()));
+		m_odometry.update(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()));
 		SmartDashboard.putNumber("X Position", getPose().getX());
         SmartDashboard.putNumber("Y Position", getPose().getY());
         SmartDashboard.putNumber("Angle Position", getPose().getRotation().getDegrees());
@@ -134,13 +139,20 @@ public class DriveSubsystem extends SubsystemBase {
 	public void resetOdometry(Pose2d pose) {
 		resetEncoders();
 		m_odometry.resetPosition(
-			ahrs.getRotation2d(), nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorPosition()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorPosition()), pose);
-	  }	
+			ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()), pose);
+	}	
+
+	private double getLeftEncoder() {
+		return talonLeftLeader.getSelectedSensorPosition() - leftEncoderOffset;
+	}
+
+	private double getRightEncoder() {
+		return talonRightLeader.getSelectedSensorPosition() - rightEncoderOffset;
+	}
 
 	public void resetEncoders() {
-		
-		talonLeftLeader.setSelectedSensorPosition(0);
-		talonRightLeader.setSelectedSensorPosition(0);
+		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition();
+		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition();
 	}
 
 	public void zeroGyroAngle() {
