@@ -26,13 +26,13 @@ public class Constants {
     //public final static double ksVolts = 0.15547;
     //public final static double kvVoltSecondsPerMeter = 1.9825;
     //public final static double kaVoltSecondsSquaredPerMeter = 0.21002;
-    public final static double ksVolts = 0.06663;
-    public final static double kvVoltSecondsPerMeter = 4.6181;
-    public final static double kaVoltSecondsSquaredPerMeter = 0.366066;
+    public final static double ksVolts = 0.13131;//0.06663;
+    public final static double kvVoltSecondsPerMeter = 2.1269;//4.6181;
+    public final static double kaVoltSecondsSquaredPerMeter = 0.37915;//0.366066;
 
     // Feedback gains (Robot specific, calibrate as above)
     //public final static double kPDriveVel = 1.2122;
-     public final static double kPDriveVel = 0.93744;
+     public final static double kPDriveVel = 1.1291;//0.93744;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
