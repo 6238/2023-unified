@@ -6,14 +6,12 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-import com.ctre.phoenix.ErrorCode;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -24,10 +22,6 @@ import frc.robot.SmartDashboardParam;
 
 public class DriveSubsystem extends SubsystemBase {
 	private final SmartDashboardParam currentLimit = new SmartDashboardParam("currentLimiter", 16); // 0.18
-
-	private final double kCountsPerRev = 2048;
-  	private final double kGearRatio = 20;
-  	private final double kWheelRadiusInches = 2.75;
 
 	private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
     private final WPI_TalonFX talonLeftFollowerOne = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_ONE);
@@ -86,12 +80,12 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		m_odometry.update(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()));
-		SmartDashboard.putNumber("X Position", getPose().getX());
-        SmartDashboard.putNumber("Y Position", getPose().getY());
-        SmartDashboard.putNumber("Angle Position", getPose().getRotation().getDegrees());
-		SmartDashboard.putNumber("X Position Graph", getPose().getX());
-		SmartDashboard.putNumber("Y Position Graph", getPose().getY());
-        SmartDashboard.putNumber("Angle Position Graph", getPose().getRotation().getDegrees());
+		SmartDashboard.putNumber("X Position", Math.floor(getPose().getX()*1000)/1000);
+        SmartDashboard.putNumber("Y Position", Math.floor(getPose().getY()*1000)/1000);
+        SmartDashboard.putNumber("Angle Position", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
+		SmartDashboard.putNumber("X Position Graph", Math.floor(getPose().getX()*1000)/1000);
+		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
+        SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
 	}
 
 	public void arcadeDrive(double fwd, double rot) {
@@ -99,9 +93,9 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	private double nativeUnitsToDistanceMeters(double sensorCounts){
-        double motorRotations = sensorCounts / kCountsPerRev;
-        double wheelRotations = motorRotations / kGearRatio;
-        double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(kWheelRadiusInches));
+        double motorRotations = sensorCounts / Constants.kCountsPerRev;
+        double wheelRotations = motorRotations / Constants.kGearRatio;
+        double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.kWheelRadiusInches));
 
         return positionMeters * 2.5106;
     }
@@ -157,6 +151,29 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public double getPitch() {
 		return ahrs.getPitch();
+	}
+
+	public boolean isBraking() {
+		return isBraking;
+	}
+
+	public void setBraking(boolean braking) {
+		if(braking) {
+			talonLeftLeader.setNeutralMode(NeutralMode.Brake);
+			talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
+			talonLeftFollowerTwo.setNeutralMode(NeutralMode.Brake);
+			talonRightLeader.setNeutralMode(NeutralMode.Brake);
+			talonRightFollowerOne.setNeutralMode(NeutralMode.Brake);
+			talonRightFollowerTwo.setNeutralMode(NeutralMode.Brake);
+		} else {
+			talonLeftLeader.setNeutralMode(NeutralMode.Coast);
+			talonLeftFollowerOne.setNeutralMode(NeutralMode.Coast);
+			talonLeftFollowerTwo.setNeutralMode(NeutralMode.Coast);
+			talonRightLeader.setNeutralMode(NeutralMode.Coast);
+			talonRightFollowerOne.setNeutralMode(NeutralMode.Coast);
+			talonRightFollowerTwo.setNeutralMode(NeutralMode.Coast);
+		}
+		isBraking = braking;
 	}
 
 	public void zeroGyroAngle() {
