@@ -2,6 +2,7 @@ package frc.robot;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.PIDCommand;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -13,6 +14,9 @@ public class BalanceCommand extends PIDCommand {
     double balanceKI = 0;
     double balanceKD = 0;
 
+    DriveSubsystem driveSubsystem;
+    Command previousCommand;
+
     public BalanceCommand(DriveSubsystem driveSubsystem) {
         super (
             new PIDController(0, 0, 0),
@@ -21,6 +25,11 @@ public class BalanceCommand extends PIDCommand {
             output -> driveSubsystem.arcadeDrive(output, 0),
             driveSubsystem
         );
+
+        this.driveSubsystem = driveSubsystem;
+
+        previousCommand = driveSubsystem.getDefaultCommand();
+        driveSubsystem.setDefaultCommand(this);
 
         //------------------------------------------------------------------------
         SmartDashboard.putNumber("balanceKp",
@@ -43,6 +52,8 @@ public class BalanceCommand extends PIDCommand {
 
         getController()
         .setTolerance(kTurnToleranceDeg, kTurnRateToleranceDegPerS);
+
+        addRequirements(driveSubsystem);
     }
 
     @Override
@@ -68,6 +79,7 @@ public class BalanceCommand extends PIDCommand {
     @Override
     public boolean isFinished() {
         // End when the controller is at the reference.
+        driveSubsystem.setDefaultCommand(previousCommand);
         return getController().atSetpoint();
     }
 }

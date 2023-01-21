@@ -50,8 +50,7 @@ public class RobotContainer {
   
     private void configureBindings() {
         new JoystickButton(joystick, Constants.BalanceRobotBttn)
-            .whileTrue(new BalanceCommand(m_robotDrive)
-            );
+            .whileTrue(new BalanceCommand(m_robotDrive));
     }
   
     public Command getAutonomousCommand() {
