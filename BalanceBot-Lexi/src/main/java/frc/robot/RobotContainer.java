@@ -67,23 +67,26 @@ public class RobotContainer {
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
+        double distance = SmartDashboard.getNumber("Distance To Travel", 1);
+        if(distance < 0) {
+            config.setReversed(true);
+        }
+
        // double distanceSetPoint = SmartDashboard.getNumber("Distance Set Point", 1);
        // SmartDashboard.putNumber("Distance Set Point", distanceSetPoint);
        // distanceSetPoint = SmartDashboard.getNumber("Distance Set Point", 1);
-
-        Trajectory exampleTrajectory =
+        Trajectory trajectory =
         TrajectoryGenerator.generateTrajectory(
             // Start at the origin facing the +X direction
             new Pose2d(0, 0, new Rotation2d(0)),
             // Pass through these two interior waypoints, making an 's' curve path
             List.of(),//new Translation2d(1, 1), new Translation2d(2, -1)),
             // End 1 meter straight ahead of where we started, facing forward
-            new Pose2d(SmartDashboard.getNumber("Distance To Travel", 1), 0, new Rotation2d(0)),
+            new Pose2d(distance, 0, new Rotation2d(0)),
             // Pass config
             config);
-
         RamseteCommand ramseteCommand = new RamseteCommand(
-            exampleTrajectory,
+            trajectory,
             m_robotDrive::getPose,
             new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
             new SimpleMotorFeedforward(
@@ -98,7 +101,7 @@ public class RobotContainer {
             m_robotDrive::tankDriveVolts,
             m_robotDrive);
 
-        m_robotDrive.resetOdometry(exampleTrajectory.getInitialPose());
+        m_robotDrive.resetOdometry(trajectory.getInitialPose());
 
         System.out.println("Initial X Position: " + m_robotDrive.getPose().getX());
         System.out.println("Initial Y Position: " + m_robotDrive.getPose().getY());
@@ -106,5 +109,13 @@ public class RobotContainer {
         
         return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
        // return Commands.run(() -> m_robotDrive.arcadeDrive(0.8, 0), m_robotDrive);
+    }
+
+    public boolean isBraking() {
+        return m_robotDrive.isBraking();
+    }
+
+    public void setBraking(boolean braking) {
+        m_robotDrive.setBraking(braking);
     }
 }
