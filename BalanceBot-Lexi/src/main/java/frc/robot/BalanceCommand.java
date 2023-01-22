@@ -14,23 +14,15 @@ public class BalanceCommand extends PIDCommand {
     double balanceKI = 0;
     double balanceKD = 0;
 
-    DriveSubsystem driveSubsystem;
-    Command previousCommand;
-
     public BalanceCommand(DriveSubsystem driveSubsystem) {
         super (
-            new PIDController(0, 0, 0),
+            new PIDController(3, 0, 0),
             driveSubsystem::getPitch,
             0,
             output -> driveSubsystem.arcadeDrive(output, 0),
             driveSubsystem
         );
-
-        this.driveSubsystem = driveSubsystem;
-
-        previousCommand = driveSubsystem.getDefaultCommand();
-        driveSubsystem.setDefaultCommand(this);
-
+        /*
         //------------------------------------------------------------------------
         SmartDashboard.putNumber("balanceKp",
             SmartDashboard.getNumber("balanceKp", 0));
@@ -47,7 +39,7 @@ public class BalanceCommand extends PIDCommand {
         getController().setI(balanceKI);
         getController().setD(balanceKD);
         //------------------------------------------------------------------------
-
+        */
         getController().enableContinuousInput(-180, 180);
 
         getController()
@@ -58,6 +50,7 @@ public class BalanceCommand extends PIDCommand {
 
     @Override
     public void execute() {
+        /*
         double kP = SmartDashboard.getNumber("balanceKp", 0);
         double kI = SmartDashboard.getNumber("balanceKi", 0);
         double kD = SmartDashboard.getNumber("balanceKi", 0);
@@ -74,12 +67,12 @@ public class BalanceCommand extends PIDCommand {
             getController().setD(balanceKD);
             balanceKD = kD;
         }
+        */
     }
 
-    @Override
-    public boolean isFinished() {
-        // End when the controller is at the reference.
-        driveSubsystem.setDefaultCommand(previousCommand);
-        return getController().atSetpoint();
-    }
+    // @Override
+    // public boolean isFinished() {
+    //     // End when the controller is at the reference.
+    //     return getController().atSetpoint();
+    // }
 }

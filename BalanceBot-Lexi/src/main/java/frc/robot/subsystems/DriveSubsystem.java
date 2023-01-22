@@ -86,9 +86,12 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("X Position Graph", Math.floor(getPose().getX()*1000)/1000);
 		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
         SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
+
+		SmartDashboard.putNumber("Pitch Angle", ahrs.getPitch());
 	}
 
 	public void arcadeDrive(double fwd, double rot) {
+		SmartDashboard.putNumber("Balancing Forward Power", fwd);
 		robotDrive.arcadeDrive(fwd, -rot);
 	}
 
@@ -150,6 +153,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public double getPitch() {
+		System.out.println("Pitch : " + ahrs.getPitch());
 		return ahrs.getPitch();
 	}
 
