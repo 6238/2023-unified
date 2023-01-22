@@ -30,11 +30,9 @@ public class BalanceCommand extends PIDCommand {
             SmartDashboard.getNumber("balanceKi", 0));
         SmartDashboard.putNumber("balanceKd",
             SmartDashboard.getNumber("balanceKd", 0));
-
         balanceKP = SmartDashboard.getNumber("balanceKp", 0);
         balanceKI = SmartDashboard.getNumber("balanceKi", 0);
         balanceKD = SmartDashboard.getNumber("balanceKi", 0);
-
         getController().setP(balanceKP);
         getController().setI(balanceKI);
         getController().setD(balanceKD);
@@ -54,7 +52,6 @@ public class BalanceCommand extends PIDCommand {
         double kP = SmartDashboard.getNumber("balanceKp", 0);
         double kI = SmartDashboard.getNumber("balanceKi", 0);
         double kD = SmartDashboard.getNumber("balanceKi", 0);
-
         if (balanceKP != kP) {
             getController().setP(balanceKP);
             balanceKP = kP;
