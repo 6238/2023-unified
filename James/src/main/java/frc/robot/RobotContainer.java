@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -41,6 +42,7 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureBindings();
+        m_robotDrive.setupSubsystem();
         m_robotDrive.setDefaultCommand(
             Commands.run(() -> m_robotDrive.arcadeDrive(-joystick.getY(), joystick.getX()), m_robotDrive)
         );
@@ -70,10 +72,10 @@ public class RobotContainer {
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
-        double distance = SmartDashboard.getNumber("Distance To Travel", 1);
-        if(distance < 0) {
-            config.setReversed(true);
-        }
+        //double distance = SmartDashboard.getNumber("Distance To Travel", 1);
+        // if(distance < 0) {
+        //     config.setReversed(true);
+        // }
 
        // double distanceSetPoint = SmartDashboard.getNumber("Distance Set Point", 1);
        // SmartDashboard.putNumber("Distance Set Point", distanceSetPoint);
@@ -85,7 +87,7 @@ public class RobotContainer {
             // Pass through these two interior waypoints, making an 's' curve path
             List.of(),//new Translation2d(1, 1), new Translation2d(2, -1)),
             // End 1 meter straight ahead of where we started, facing forward
-            new Pose2d(distance, 0, new Rotation2d(0)),
+            new Pose2d(1.5, 0, new Rotation2d(0)),
             // Pass config
             config);
         RamseteCommand ramseteCommand = new RamseteCommand(
@@ -106,14 +108,11 @@ public class RobotContainer {
 
         m_robotDrive.resetOdometry(trajectory.getInitialPose());
 
-        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
+        // return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0, 0));
+        return ramseteCommand.andThen(new BalanceCommand(m_robotDrive));
     }
 
-    public boolean isBraking() {
-        return m_robotDrive.isBraking();
-    }
-
-    public void setBraking(boolean braking) {
-        m_robotDrive.setBraking(braking);
+    public void setupDriveSubsystem() {
+        m_robotDrive.setupSubsystem();
     }
 }
