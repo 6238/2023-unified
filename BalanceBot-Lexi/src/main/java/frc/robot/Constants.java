@@ -49,4 +49,5 @@ public class Constants {
 
     public static int BalanceRobotBttn = 2;
     public static int ConeButton = 10;
+    public static int OpenClawBttn = 1;
 }
