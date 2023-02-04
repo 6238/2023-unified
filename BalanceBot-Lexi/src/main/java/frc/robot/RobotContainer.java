@@ -4,12 +4,16 @@
 
 package frc.robot;
 
+import frc.robot.commands.BalanceCommand;
+import frc.robot.commands.ObjectCommand;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.commands.TrajectoryCommand;
 
 import java.util.List;
 
 import org.photonvision.PhotonCamera;
 
+import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -60,61 +64,10 @@ public class RobotContainer {
     }
   
     public Command getAutonomousCommand() {
-        var autoVoltageConstraint =
-        new DifferentialDriveVoltageConstraint(
-            new SimpleMotorFeedforward(
-                Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,
-            10);
-
-        TrajectoryConfig config =
-        new TrajectoryConfig(
-            Constants.kMaxSpeedMetersPerSecond,
-            Constants.kMaxAccelerationMetersPerSecondSquared)
-            // Add kinematics to ensure max speed is actually obeyed
-            .setKinematics(Constants.kDriveKinematics)
-            // Apply the voltage constraint
-            .addConstraint(autoVoltageConstraint);
-
         double distance = SmartDashboard.getNumber("Distance To Travel", 1);
-        if(distance < 0) {
-            config.setReversed(true);
-        }
-
-       // double distanceSetPoint = SmartDashboard.getNumber("Distance Set Point", 1);
-       // SmartDashboard.putNumber("Distance Set Point", distanceSetPoint);
-       // distanceSetPoint = SmartDashboard.getNumber("Distance Set Point", 1);
-        Trajectory trajectory =
-        TrajectoryGenerator.generateTrajectory(
-            // Start at the origin facing the +X direction
-            new Pose2d(0, 0, new Rotation2d(0)),
-            // Pass through these two interior waypoints, making an 's' curve path
-            List.of(),//new Translation2d(1, 1), new Translation2d(2, -1)),
-            // End 1 meter straight ahead of where we started, facing forward
-            new Pose2d(distance, 0, new Rotation2d(0)),
-            // Pass config
-            config);
-        RamseteCommand ramseteCommand = new RamseteCommand(
-            trajectory,
-            m_robotDrive::getPose,
-            new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
-            new SimpleMotorFeedforward(
-                Constants.ksVolts,
-                Constants.kvVoltSecondsPerMeter,
-                Constants.kaVoltSecondsSquaredPerMeter),
-            Constants.kDriveKinematics,
-            m_robotDrive::getWheelSpeeds,
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            new PIDController(Constants.kPDriveVel, 0, 0),
-            // RamseteCommand passes volts to the callback
-            m_robotDrive::tankDriveVolts,
-            m_robotDrive);
-
-        m_robotDrive.resetOdometry(trajectory.getInitialPose());
-
-        return ramseteCommand.andThen(() -> m_robotDrive.tankDriveVolts(0,0));
+        Pair[] points = {new Pair<Double,Double>(distance,0.0)};
+        return new TrajectoryCommand(m_robotDrive, points, 0.0)
+            .andThen(() -> m_robotDrive.tankDriveVolts(0,0));
     }
 
     public boolean isBraking() {
