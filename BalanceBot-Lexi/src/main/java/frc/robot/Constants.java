@@ -9,6 +9,12 @@ public class Constants {
     public final static int RIGHT_LEADER_ID = 30;
     public final static int RIGHT_FOLLOWER_ID_ONE = 32;
     public final static int RIGHT_FOLLOWER_ID_TWO = 34;
+
+    public final static int CameraResolutionWidth = 180;
+    public final static int CameraResolutionHeight = 320;
+    public final static double cameraHeight = 1.0; // meters
+    public final static double coneHeight = 0.1524; // meters to center of cone(assuming it is on the floor)
+    public final static double cameraPitch = 0.0; // radians
     
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;
@@ -23,9 +29,6 @@ public class Constants {
     public static final double kMaxAccelerationMetersPerSecondSquared = 1;
 
     // Feedforward gains (Robot specific, calibrate according to: https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/characterizing-drive.html)
-    //public final static double ksVolts = 0.15547;
-    //public final static double kvVoltSecondsPerMeter = 1.9825;
-    //public final static double kaVoltSecondsSquaredPerMeter = 0.21002;
     public final static double ksVolts = 0.13131;//0.06663;
     public final static double kvVoltSecondsPerMeter = 2.1269;//4.6181;
     public final static double kaVoltSecondsSquaredPerMeter = 0.37915;//0.366066;
@@ -44,4 +47,5 @@ public class Constants {
     public static double kdStabilization = 0;
 
     public static int BalanceRobotBttn = 2;
+    public static int ConeButton = 10;
 }

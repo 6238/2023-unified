@@ -1,75 +1,71 @@
 package frc.robot;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.PIDCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class BalanceCommand extends PIDCommand {
-    public final double kTurnToleranceDeg = 2;
-    public final double kTurnRateToleranceDegPerS = 1;
-    
-    double balanceKP = 0;
-    double balanceKI = 0;
-    double balanceKD = 0;
+public class BalanceCommand extends CommandBase {
+    private final double angleErrorTolerance = 2;
+    private final double maxDegreePerSecond = 1;
+
+    private final double minVoltage = 0.35;
+    private final double maxVoltage = 0.6;
+    // 0 < minVoltage < maxVoltage < 1.0
+
+    private final DriveSubsystem driveSubsystem;  
+    private double prevPitch;
+    private long timeAtPrevPitch;
+    private long timeSinceStart;
+    // private boolean driving = true;
+    // private long timeAtSwitch;
 
     public BalanceCommand(DriveSubsystem driveSubsystem) {
-        super (
-            new PIDController(3, 0, 0),
-            driveSubsystem::getPitch,
-            0,
-            output -> driveSubsystem.arcadeDrive(output, 0),
-            driveSubsystem
-        );
-        /*
-        //------------------------------------------------------------------------
-        SmartDashboard.putNumber("balanceKp",
-            SmartDashboard.getNumber("balanceKp", 0));
-        SmartDashboard.putNumber("balanceKi",
-            SmartDashboard.getNumber("balanceKi", 0));
-        SmartDashboard.putNumber("balanceKd",
-            SmartDashboard.getNumber("balanceKd", 0));
-        balanceKP = SmartDashboard.getNumber("balanceKp", 0);
-        balanceKI = SmartDashboard.getNumber("balanceKi", 0);
-        balanceKD = SmartDashboard.getNumber("balanceKi", 0);
-        getController().setP(balanceKP);
-        getController().setI(balanceKI);
-        getController().setD(balanceKD);
-        //------------------------------------------------------------------------
-        */
-        getController().enableContinuousInput(-180, 180);
-
-        getController()
-        .setTolerance(kTurnToleranceDeg, kTurnRateToleranceDegPerS);
-
+        this.driveSubsystem = driveSubsystem;
         addRequirements(driveSubsystem);
+
+        prevPitch = driveSubsystem.getPitch();
+        timeAtPrevPitch = System.currentTimeMillis();
+        timeSinceStart = System.currentTimeMillis();
+        //timeAtSwitch = System.currentTimeMillis();
     }
 
     @Override
     public void execute() {
-        /*
-        double kP = SmartDashboard.getNumber("balanceKp", 0);
-        double kI = SmartDashboard.getNumber("balanceKi", 0);
-        double kD = SmartDashboard.getNumber("balanceKi", 0);
-        if (balanceKP != kP) {
-            getController().setP(balanceKP);
-            balanceKP = kP;
+        // long newTime = System.currentTimeMillis();
+        // if(newTime - timeAtSwitch >= 500) {
+        //     driving = !driving;
+        //     timeAtSwitch = newTime;
+        // }
+        // if(!driving) {
+        //     return;
+        // }
+        double pitch = driveSubsystem.getPitch();
+        double fwd;
+        double timeScale = 0;
+        timeScale = (System.currentTimeMillis() - timeSinceStart)/10000;
+        if(pitch > 0) {
+            fwd = -(Math.sin(pitch*Math.PI/180)) * (maxVoltage - minVoltage - timeScale) - minVoltage;
+        } else {
+            fwd = -(Math.sin(pitch*Math.PI/180)) * (maxVoltage - minVoltage - timeScale) + minVoltage;
         }
-        if (balanceKI == kI) {
-            getController().setI(balanceKI);
-            balanceKI = kI;
-        }
-        if (balanceKD == kD) {
-            getController().setD(balanceKD);
-            balanceKD = kD;
-        }
-        */
+        System.out.println(fwd);
+        //System.out.println("Original: " + -(Math.sin(pitch)) * (maxVoltage - minVoltage) + ", Scaled: " + fwd);
+        // maps [0, maxPitch] to [minVoltage, maxVoltage]
+        driveSubsystem.arcadeDrive(fwd, 0);
     }
 
-    // @Override
-    // public boolean isFinished() {
-    //     // End when the controller is at the reference.
-    //     return getController().atSetpoint();
-    // }
+    @Override
+    public boolean isFinished() {
+        double newPitch = driveSubsystem.getPitch();
+        long newTime = System.currentTimeMillis();
+        if (1000 * Math.abs((newPitch - prevPitch)) / (newTime - timeAtPrevPitch) <= maxDegreePerSecond
+            // check error derivative value
+            && Math.abs(newPitch) <= angleErrorTolerance
+            // check position value
+            ) {
+            return true;
+        }
+        prevPitch = newPitch;
+        timeAtPrevPitch = newTime;
+        return false;
+    }
 }

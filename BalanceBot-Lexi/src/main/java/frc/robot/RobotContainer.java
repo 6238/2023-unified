@@ -8,6 +8,8 @@ import frc.robot.subsystems.DriveSubsystem;
 
 import java.util.List;
 
+import org.photonvision.PhotonCamera;
+
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -37,10 +39,14 @@ public class RobotContainer {
   
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final Joystick joystick = new Joystick(0);
-  
+
+    private PhotonCamera camera = new PhotonCamera("jacob");
+      
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureBindings();
+        camera.setPipelineIndex(1);
+        camera.setDriverMode(true);
         m_robotDrive.setDefaultCommand(
             Commands.run(() -> m_robotDrive.arcadeDrive(-joystick.getY(), joystick.getX()), m_robotDrive)
         );
@@ -49,6 +55,8 @@ public class RobotContainer {
     private void configureBindings() {
         new JoystickButton(joystick, Constants.BalanceRobotBttn)
             .whileTrue(new BalanceCommand(m_robotDrive));
+        new JoystickButton(joystick, Constants.ConeButton)
+            .whileTrue(new ConeCommand(m_robotDrive, camera));
     }
   
     public Command getAutonomousCommand() {
@@ -115,5 +123,9 @@ public class RobotContainer {
 
     public void setBraking(boolean braking) {
         m_robotDrive.setBraking(braking);
+    }
+
+    public PhotonCamera getCamera() {
+        return camera;
     }
 }
