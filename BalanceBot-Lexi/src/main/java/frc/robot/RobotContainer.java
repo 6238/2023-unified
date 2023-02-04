@@ -40,7 +40,7 @@ public class RobotContainer {
     // Replace with CommandPS4Controller or CommandJoystick if needed
     private final Joystick joystick = new Joystick(0);
 
-    private PhotonCamera camera = new PhotonCamera("jacob");
+    private PhotonCamera camera = new PhotonCamera("Private");
       
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -56,7 +56,7 @@ public class RobotContainer {
         new JoystickButton(joystick, Constants.BalanceRobotBttn)
             .whileTrue(new BalanceCommand(m_robotDrive));
         new JoystickButton(joystick, Constants.ConeButton)
-            .whileTrue(new ConeCommand(m_robotDrive, camera));
+            .whileTrue(new ObjectCommand(m_robotDrive, camera, 0));
     }
   
     public Command getAutonomousCommand() {

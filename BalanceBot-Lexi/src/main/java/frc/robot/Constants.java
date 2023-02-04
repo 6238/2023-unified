@@ -13,7 +13,8 @@ public class Constants {
     public final static int CameraResolutionWidth = 180;
     public final static int CameraResolutionHeight = 320;
     public final static double cameraHeight = 1.0; // meters
-    public final static double coneHeight = 0.1524; // meters to center of cone(assuming it is on the floor)
+    public final static double coneHeight = 0.165; // meters to center of cone(assuming it is on the floor)
+    public final static double cubeHeight = 0.12; // meters to center of cube(assuming it is on the floor)
     public final static double cameraPitch = 0.0; // radians
     
     public final static double kCountsPerRev = 2048;
