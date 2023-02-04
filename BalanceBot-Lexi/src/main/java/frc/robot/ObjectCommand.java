@@ -9,11 +9,15 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class ObjectCommand extends CommandBase {
     private final double positionTolerance = 1;
-    private final double angleTolerance = 5;
+    private final double angleTolerance = 3;
 
-    private final double minVoltage = 0.35;
-    private final double maxVoltage = 0.6;
-    // 0 < minVoltage < maxVoltage < 1.0
+    private final double forwardCap = 5.0;
+    private final double minForward = 0.35;
+    private final double maxForward = 0.6;
+
+    private final double rotationCap = 1.0;
+    private final double minRotation = 0.2;
+    private final double maxRotation = 0.5;
 
     private final DriveSubsystem driveSubsystem; 
     private final PhotonCamera camera;
@@ -59,14 +63,24 @@ public class ObjectCommand extends CommandBase {
                 objectHeight, // height off ground
                 Constants.cameraPitch, // pitch relative to ground
                 Units.degreesToRadians(target.getPitch())) - 1; // to add a buffer for claw
-            
-            yawDelta = target.getYaw();
-            //double angleDelta = Math.asin(1.11*pixelDelta/Constants.CameraResolutionWidth);
-            if(distance >= 5) distance = 5;
-            double fwd;
-            fwd = distance/5 * (maxVoltage - minVoltage) + minVoltage;
+                     
+            double fwd = distance;
+            if(distance > forwardCap) {
+                fwd = maxForward;
+            } else {
+                fwd = minForward + distance * (maxForward - minForward) / forwardCap;
+            }
 
-            driveSubsystem.arcadeDrive(fwd, yawDelta);
+            yawDelta = target.getYaw();
+
+            double rot = yawDelta;
+            if(rot > rotationCap) {
+                rot = maxRotation;
+            } else {
+                rot = minRotation + rot * (maxRotation - minRotation) / rotationCap;
+            }
+
+            driveSubsystem.arcadeDrive(fwd, rot);
         }
     }
 
