@@ -36,6 +36,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final AHRS ahrs = new AHRS(SPI.Port.kMXP);
 
+	private double ahrsPitchOffset;
+
 	private final DifferentialDriveOdometry m_odometry;
 
 	private final int PID_ID;
@@ -71,10 +73,17 @@ public class DriveSubsystem extends SubsystemBase {
         talonRightFollowerOne.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
         talonRightFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
 
-		resetEncoders();
-		zeroGyroAngle();
-
 		m_odometry = new DifferentialDriveOdometry(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorPosition()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorPosition()));
+
+		zeroPitch();
+		zeroGyroAngle();
+		resetEncoders();
+	}
+
+	public void setupSubsystem() {
+		// zeroPitch();
+		SmartDashboard.putBoolean("Brakes", true);
+    	isBraking = true;
 	}
 
 	@Override
@@ -87,7 +96,14 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
         SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
 
-		SmartDashboard.putNumber("Pitch Angle", ahrs.getPitch());
+		SmartDashboard.putNumber("Pitch Angle", getPitch());
+		boolean braking = SmartDashboard.getBoolean("Brakes", true);
+		if(braking != isBraking) {
+			isBraking = braking;
+			SmartDashboard.putBoolean("Brakes", braking);
+		}
+
+		SmartDashboard.putNumber("Pitch Offset", ahrsPitchOffset);
 	}
 
 	public void arcadeDrive(double fwd, double rot) {
@@ -153,12 +169,15 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public double getPitch() {
-		System.out.println("Pitch : " + ahrs.getPitch());
-		return ahrs.getPitch();
+		return ahrs.getPitch() - ahrsPitchOffset;
 	}
 
 	public boolean isBraking() {
 		return isBraking;
+	}
+
+	public void zeroPitch() {
+		ahrsPitchOffset = ahrs.getPitch();
 	}
 
 	public void setBraking(boolean braking) {
