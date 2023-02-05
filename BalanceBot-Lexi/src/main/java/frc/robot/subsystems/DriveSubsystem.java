@@ -39,11 +39,9 @@ public class DriveSubsystem extends SubsystemBase {
 	private final DifferentialDriveOdometry m_odometry;
 
 	private final int PID_ID;
-    boolean isBraking;
 
 	public DriveSubsystem() {
 		PID_ID = 0;
-        isBraking = true;
         talonLeftFollowerOne.follow(talonLeftLeader);
         talonLeftFollowerTwo.follow(talonLeftLeader);
 
@@ -74,6 +72,9 @@ public class DriveSubsystem extends SubsystemBase {
 		resetEncoders();
 		zeroGyroAngle();
 
+		SmartDashboard.putBoolean("Brakes", true);
+		setBraking(true);
+
 		m_odometry = new DifferentialDriveOdometry(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorPosition()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorPosition()));
 	}
 
@@ -86,8 +87,10 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("X Position Graph", Math.floor(getPose().getX()*1000)/1000);
 		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
         SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
-
 		SmartDashboard.putNumber("Pitch Angle", ahrs.getPitch());
+
+		boolean braking = SmartDashboard.getBoolean("Brakes", true);
+		setBraking(braking);
 	}
 
 	public void arcadeDrive(double fwd, double rot) {
@@ -157,11 +160,7 @@ public class DriveSubsystem extends SubsystemBase {
 		return ahrs.getPitch();
 	}
 
-	public boolean isBraking() {
-		return isBraking;
-	}
-
-	public void setBraking(boolean braking) {
+	private void setBraking(boolean braking) {
 		if(braking) {
 			talonLeftLeader.setNeutralMode(NeutralMode.Brake);
 			talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
@@ -177,7 +176,6 @@ public class DriveSubsystem extends SubsystemBase {
 			talonRightFollowerOne.setNeutralMode(NeutralMode.Coast);
 			talonRightFollowerTwo.setNeutralMode(NeutralMode.Coast);
 		}
-		isBraking = braking;
 	}
 
 	public void zeroGyroAngle() {

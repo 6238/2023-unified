@@ -49,8 +49,8 @@ public class RobotContainer {
   
     private void configureBindings() {
         new JoystickButton(joystick, Constants.OpenClawBttn)
-            .onTrue(Commands.run(() -> m_ClawSubsystem.extendSolenoid()))
-            .onFalse(Commands.run(() -> m_ClawSubsystem.retractSolenoid()));
+            .onTrue(Commands.runOnce(() -> m_ClawSubsystem.extendSolenoid()).andThen())
+            .onFalse(Commands.runOnce(() -> m_ClawSubsystem.retractSolenoid()));
         new JoystickButton(joystick, Constants.BalanceRobotBttn)
             .whileTrue(new BalanceCommand(m_robotDrive));
         new JoystickButton(joystick, Constants.ConeButton)
@@ -62,14 +62,6 @@ public class RobotContainer {
         Pair[] points = {new Pair<Double,Double>(distance,0.0)};
         return new TrajectoryCommand(m_robotDrive, points, 0.0)
             .andThen(() -> m_robotDrive.tankDriveVolts(0,0));
-    }
-
-    public boolean isBraking() {
-        return m_robotDrive.isBraking();
-    }
-
-    public void setBraking(boolean braking) {
-        m_robotDrive.setBraking(braking);
     }
 
     public PhotonCamera getCamera() {
