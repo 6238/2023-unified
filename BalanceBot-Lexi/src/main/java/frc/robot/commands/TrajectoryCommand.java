@@ -19,7 +19,7 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class TrajectoryCommand extends RamseteCommand{
-    public TrajectoryCommand(DriveSubsystem m_robotDrive, Pair<Double,Double>[] points, double rotation) {
+    public TrajectoryCommand(DriveSubsystem m_robotDrive, List<Pair<Double,Double>> points, double rotation) {
         super(
            generateTrajectory(points, rotation, m_robotDrive),
            m_robotDrive::getPose,
@@ -37,7 +37,7 @@ public class TrajectoryCommand extends RamseteCommand{
            m_robotDrive);
     }
 
-    private static Trajectory generateTrajectory(Pair<Double,Double>[] points, double rotation, DriveSubsystem m_robotDrive) {
+    private static Trajectory generateTrajectory(List<Pair<Double,Double>> points, double rotation, DriveSubsystem m_robotDrive) {
         var autoVoltageConstraint =
         new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(
@@ -56,11 +56,11 @@ public class TrajectoryCommand extends RamseteCommand{
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
-        Pair<Double,Double> lastCoords = points[points.length];
+        Pair<Double,Double> lastCoords = points.get(points.size() - 1);
         Pose2d last = new Pose2d(lastCoords.getFirst(), lastCoords.getSecond(), new Rotation2d(rotation));
         List<Translation2d> internalPoints = new LinkedList<Translation2d>();
-        for(int i=1; i<points.length; i++) {
-            Pair<Double,Double> point = points[i];
+        for(int i = 1; i < points.size() - 1; i++) {
+            Pair<Double,Double> point = points.get(i);
             internalPoints.add(new Translation2d(point.getFirst(), point.getSecond()));
         }
 

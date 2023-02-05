@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import java.util.LinkedList;
+
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.ObjectCommand;
 import frc.robot.subsystems.ClawSubsystem;
@@ -59,7 +61,8 @@ public class RobotContainer {
   
     public Command getAutonomousCommand() {
         double distance = SmartDashboard.getNumber("Distance To Travel", 1);
-        Pair[] points = {new Pair<Double,Double>(distance,0.0)};
+        LinkedList<Pair<Double, Double>> points = new LinkedList<Pair<Double, Double>>();
+        points.push(new Pair<Double,Double>(distance,0.0));
         return new TrajectoryCommand(m_robotDrive, points, 0.0)
             .andThen(() -> m_robotDrive.tankDriveVolts(0,0));
     }
