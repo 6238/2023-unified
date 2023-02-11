@@ -63,7 +63,7 @@ public class RobotContainer {
     }
 
     private DriveToObjectCommand getObjectCommand(int object) {
-        return () -> getDriveToObjectCommand(m_robotDrive, camera, object)
+        return new DriveToObjectCommand(m_robotDrive, camera, object);
     }
   
     public Command getAutonomousCommand() {
