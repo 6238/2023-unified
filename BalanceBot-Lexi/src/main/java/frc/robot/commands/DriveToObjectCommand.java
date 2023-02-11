@@ -19,11 +19,23 @@ public class DriveToObjectCommand extends TrajectoryCommand {
      * @param object 0 for cone, 1 for cube
      */
     public DriveToObjectCommand(DriveSubsystem driveSubsystem, PhotonCamera camera, int object) {
-        super(driveSubsystem, getObjectPosition(object, camera), 0);
+        super(driveSubsystem, getObjectPosition(object, camera),
+            getObjectRotation(camera));
+        System.out.println("Rotation Value: " + getObjectRotation(camera));
+        LinkedList<Pair<Double,Double>> position = getObjectPosition(object, camera);
+        System.out.println("X Position Value: " + position.getFirst());
+        System.out.println("Y Position Value: " + position.getLast());
+    }
+
+    private static double getObjectRotation(PhotonCamera camera) {
+        var result = camera.getLatestResult();
+        while (!result.hasTargets()) {
+            result = camera.getLatestResult();
+        }
+        return result.getBestTarget().getYaw();
     }
 
     private static LinkedList<Pair<Double, Double>> getObjectPosition(int object, PhotonCamera camera) {
-        System.out.println("Inside getObjectPosition");
         double objectHeight = 0;
         switch(object) {
             case 0:
@@ -39,10 +51,8 @@ public class DriveToObjectCommand extends TrajectoryCommand {
 
         var result = camera.getLatestResult();
         while (!result.hasTargets()) {
-            System.out.println("Stuck in loop.");
             result = camera.getLatestResult();
         }
-        System.out.println("End Loop.");
         
         var target = result.getBestTarget();
         double distance = PhotonUtils.calculateDistanceToTargetMeters(

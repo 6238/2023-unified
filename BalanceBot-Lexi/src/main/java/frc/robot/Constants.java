@@ -30,13 +30,13 @@ public class Constants {
     public static final double kMaxAccelerationMetersPerSecondSquared = 1;
 
     // Feedforward gains (Robot specific, calibrate according to: https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/characterizing-drive.html)
-    public final static double ksVolts = 0.09973;//0.13131;
-    public final static double kvVoltSecondsPerMeter = 2.1491;//2.1269;
-    public final static double kaVoltSecondsSquaredPerMeter = 0.16595;//0.37915;
+    public final static double ksVolts = 0.08642;//0.09973;//0.13131;
+    public final static double kvVoltSecondsPerMeter = 2.1822;//2.1491;//2.1269;
+    public final static double kaVoltSecondsSquaredPerMeter = 0.1413;//0.16595;//0.37915;
 
     // Feedback gains (Robot specific, calibrate as above)
     //public final static double kPDriveVel = 1.2122;
-     public final static double kPDriveVel = 0.29573;//1.1291;;
+    public final static double kPDriveVel = 0.17305;//0.29573;//1.1291;;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;

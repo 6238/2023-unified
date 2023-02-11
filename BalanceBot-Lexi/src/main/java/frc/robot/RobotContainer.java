@@ -70,7 +70,7 @@ public class RobotContainer {
         double distance = SmartDashboard.getNumber("Distance To Travel", 1);
         LinkedList<Pair<Double, Double>> points = new LinkedList<Pair<Double, Double>>();
         points.push(new Pair<Double,Double>(distance,0.0));
-        return new TrajectoryCommand(m_robotDrive, points, 0.0)
+        return new TrajectoryCommand(m_robotDrive, points, 90.0)
             .andThen(() -> m_robotDrive.tankDriveVolts(0,0));
     }
 
