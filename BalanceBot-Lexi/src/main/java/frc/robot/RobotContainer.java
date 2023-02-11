@@ -7,6 +7,7 @@ package frc.robot;
 import java.util.LinkedList;
 
 import frc.robot.commands.BalanceCommand;
+import frc.robot.commands.DriveToObjectCommand;
 import frc.robot.commands.ObjectCommand;
 import frc.robot.subsystems.ClawSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -38,7 +39,9 @@ public class RobotContainer {
     private final Joystick joystick = new Joystick(0);
 
     private PhotonCamera camera = new PhotonCamera("Private");
-      
+    
+    private DriveToObjectCommand objectCommand;
+
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureBindings();
@@ -56,7 +59,7 @@ public class RobotContainer {
         new JoystickButton(joystick, Constants.BalanceRobotBttn)
             .whileTrue(new BalanceCommand(m_robotDrive));
         new JoystickButton(joystick, Constants.ConeButton)
-            .whileTrue(new ObjectCommand(m_robotDrive, camera, 0));
+            .whileTrue(new DriveToObjectCommand(m_robotDrive, camera, 1));
     }
   
     public Command getAutonomousCommand() {

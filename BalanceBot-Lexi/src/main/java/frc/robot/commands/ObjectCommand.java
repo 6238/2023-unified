@@ -4,17 +4,18 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class ObjectCommand extends CommandBase {
-    private final double positionTolerance = 1;
+    private final double positionTolerance = 0.4;
     private final double angleTolerance = 3;
 
     private final double forwardCap = 5.0;
-    private final double minForward = 0.35;
-    private final double maxForward = 0.6;
+    private final double minForward = 0.28;
+    private final double maxForward = 0.5;
 
     private final double rotationCap = 1.0;
     private final double minRotation = 0.2;
@@ -57,13 +58,14 @@ public class ObjectCommand extends CommandBase {
 
         // get distance to cone
         if(result.hasTargets()) {
+            System.out.println("We have targets");
             var target = result.getBestTarget();
 
             distance = PhotonUtils.calculateDistanceToTargetMeters(
                 Constants.cameraHeight, // height off ground
                 objectHeight, // height off ground
                 Constants.cameraPitch, // pitch relative to ground
-                Units.degreesToRadians(target.getPitch())) - 1; // to add a buffer for claw
+                Units.degreesToRadians(target.getPitch())); // to add a buffer for claw
                      
             double fwd = distance;
             if(distance > forwardCap) {
@@ -87,11 +89,8 @@ public class ObjectCommand extends CommandBase {
 
     @Override
     public boolean isFinished() {
+        System.out.println("Distance to target: " + distance);
+        System.out.println("Target Met: " + (distance <= positionTolerance && Math.abs(yawDelta) < angleTolerance));
         return (distance <= positionTolerance && Math.abs(yawDelta) < angleTolerance);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        camera.setDriverMode(true);
     }
 }

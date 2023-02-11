@@ -59,7 +59,7 @@ public class TrajectoryCommand extends RamseteCommand{
         Pair<Double,Double> lastCoords = points.get(points.size() - 1);
         Pose2d last = new Pose2d(lastCoords.getFirst(), lastCoords.getSecond(), new Rotation2d(rotation));
         List<Translation2d> internalPoints = new LinkedList<Translation2d>();
-        for(int i = 1; i < points.size() - 1; i++) {
+        for(int i = 0; i < points.size() - 1; i++) {
             Pair<Double,Double> point = points.get(i);
             internalPoints.add(new Translation2d(point.getFirst(), point.getSecond()));
         }
