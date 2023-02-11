@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.ProxyCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -39,8 +40,6 @@ public class RobotContainer {
     private final Joystick joystick = new Joystick(0);
 
     private PhotonCamera camera = new PhotonCamera("Private");
-    
-    private DriveToObjectCommand objectCommand;
 
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
@@ -58,8 +57,13 @@ public class RobotContainer {
             .onFalse(Commands.runOnce(() -> m_ClawSubsystem.retractSolenoid()));
         new JoystickButton(joystick, Constants.BalanceRobotBttn)
             .whileTrue(new BalanceCommand(m_robotDrive));
-        new JoystickButton(joystick, Constants.ConeButton)
-            .whileTrue(new DriveToObjectCommand(m_robotDrive, camera, 1));
+        new JoystickButton(joystick, Constants.DriveToObjBttn)
+            .whileTrue(
+            new ProxyCommand(() -> getObjectCommand(1)));
+    }
+
+    private DriveToObjectCommand getObjectCommand(int object) {
+        return () -> getDriveToObjectCommand(m_robotDrive, camera, object)
     }
   
     public Command getAutonomousCommand() {

@@ -21,23 +21,17 @@ public class BalanceCommand extends CommandBase {
     public BalanceCommand(DriveSubsystem driveSubsystem) {
         this.driveSubsystem = driveSubsystem;
         addRequirements(driveSubsystem);
+    }
 
+    @Override
+    public void initialize() {
         prevPitch = driveSubsystem.getPitch();
         timeAtPrevPitch = System.currentTimeMillis();
         timeSinceStart = System.currentTimeMillis();
-        //timeAtSwitch = System.currentTimeMillis();
     }
 
     @Override
     public void execute() {
-        // long newTime = System.currentTimeMillis();
-        // if(newTime - timeAtSwitch >= 500) {
-        //     driving = !driving;
-        //     timeAtSwitch = newTime;
-        // }
-        // if(!driving) {
-        //     return;
-        // }
         double pitch = driveSubsystem.getPitch();
         double fwd;
         double timeScale = 0;

@@ -48,6 +48,6 @@ public class Constants {
     public static double kdStabilization = 0;
 
     public static int BalanceRobotBttn = 2;
-    public static int ConeButton = 10;
+    public static int DriveToObjBttn = 10;
     public static int OpenClawBttn = 1;
 }

@@ -28,6 +28,7 @@ public class ObjectCommand extends CommandBase {
     private double yawDelta;
 
     private double objectHeight;
+    private int object;
 
     /*
      * Creates a new Object Command using the camera to detect the input object
@@ -38,6 +39,7 @@ public class ObjectCommand extends CommandBase {
     public ObjectCommand(DriveSubsystem driveSubsystem, PhotonCamera camera, int object) {
         this.driveSubsystem = driveSubsystem;
         this.camera = camera;
+        this.object = object;
         switch(object) {
             case 0:
                 objectHeight = Constants.coneHeight;
@@ -46,6 +48,10 @@ public class ObjectCommand extends CommandBase {
                 objectHeight = Constants.cubeHeight;
                 break;
         }
+    }
+
+    @Override
+    public void initialize() {
         camera.setDriverMode(false);
         camera.setPipelineIndex(object);
         addRequirements(driveSubsystem);

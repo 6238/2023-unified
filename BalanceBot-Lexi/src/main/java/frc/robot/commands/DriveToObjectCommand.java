@@ -11,36 +11,15 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
-public class DriveToObjectCommand extends CommandBase {
+public class DriveToObjectCommand extends TrajectoryCommand {
     /*
      * Creates a new Object Command using the camera to detect the input object
      * @param driveSubsystem the driveSubsystem
      * @param camera the camera
      * @param object 0 for cone, 1 for cube
      */
-
-    private TrajectoryCommand command;
-    private DriveSubsystem driveSubsystem;
-    private PhotonCamera camera;
-    private int object;
-
     public DriveToObjectCommand(DriveSubsystem driveSubsystem, PhotonCamera camera, int object) {
-        this.driveSubsystem = driveSubsystem;
-        this.camera = camera;
-        this.object = object;
-    }
-
-    @Override
-    public void initialize() {
-        command = new TrajectoryCommand(driveSubsystem,
-        new LinkedList<Pair<Double, Double>>(getObjectPosition(object, camera)),
-        0);
-        command.schedule();
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        command.cancel();
+        super(driveSubsystem, getObjectPosition(object, camera), 0);
     }
 
     private static LinkedList<Pair<Double, Double>> getObjectPosition(int object, PhotonCamera camera) {
@@ -76,12 +55,6 @@ public class DriveToObjectCommand extends CommandBase {
         LinkedList<Pair<Double, Double>> coordinateList = new LinkedList<Pair<Double, Double>>();
         coordinateList.add(new Pair<Double, Double>(distance,
             distance * Math.sin(Math.PI * yawDelta / 180)));
-        for (int i = 0; i < 1000; i++) {
-            System.out.println("X Position Target: " + coordinateList.get(0).getFirst());
-        }
-        for (int j = 0; j < 1000; j++) {
-            System.out.println("Y Position Target: " + coordinateList.get(0).getSecond());
-        }
 
         return coordinateList;
     }
