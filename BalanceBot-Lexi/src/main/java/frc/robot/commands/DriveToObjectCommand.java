@@ -7,11 +7,12 @@ import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveToObjectCommand extends TrajectoryCommand {
+    private static int timer = 0;
+    
     /*
      * Creates a new Object Command using the camera to detect the input object
      * @param driveSubsystem the driveSubsystem
@@ -23,16 +24,18 @@ public class DriveToObjectCommand extends TrajectoryCommand {
             getObjectRotation(camera));
         System.out.println("Rotation Value: " + getObjectRotation(camera));
         LinkedList<Pair<Double,Double>> position = getObjectPosition(object, camera);
-        System.out.println("X Position Value: " + position.getFirst());
-        System.out.println("Y Position Value: " + position.getLast());
+        System.out.println("X Position Value: " + position.getFirst().getFirst());
+        System.out.println("Y Position Value: " + position.getFirst().getSecond());
     }
 
     private static double getObjectRotation(PhotonCamera camera) {
         var result = camera.getLatestResult();
-        while (!result.hasTargets()) {
+        while (!result.hasTargets() || timer < 50) {
+            timer++;
             result = camera.getLatestResult();
         }
-        return result.getBestTarget().getYaw();
+        timer = 0;
+        return -1*(result.getBestTarget().getYaw());
     }
 
     private static LinkedList<Pair<Double, Double>> getObjectPosition(int object, PhotonCamera camera) {
@@ -50,9 +53,11 @@ public class DriveToObjectCommand extends TrajectoryCommand {
         camera.setPipelineIndex(object);
 
         var result = camera.getLatestResult();
-        while (!result.hasTargets()) {
+        while (!result.hasTargets() || timer < 50) {
             result = camera.getLatestResult();
+            timer++;
         }
+        timer = 0;
         
         var target = result.getBestTarget();
         double distance = PhotonUtils.calculateDistanceToTargetMeters(
