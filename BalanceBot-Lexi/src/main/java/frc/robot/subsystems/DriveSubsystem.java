@@ -94,8 +94,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void arcadeDrive(double fwd, double rot) {
-		SmartDashboard.putNumber("Balancing Forward Power", fwd);
-		robotDrive.arcadeDrive(fwd, -rot);
+		robotDrive.arcadeDrive(-fwd, -rot);
 	}
 
 	private double nativeUnitsToDistanceMeters(double sensorCounts){
@@ -120,11 +119,8 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
-		SmartDashboard.putNumber("Right Volts - Left Volts", rightVolts - leftVolts);
-		SmartDashboard.putNumber("Right Volts", rightVolts);
-		SmartDashboard.putNumber("Left Volts",leftVolts);
-		talonLeftLeader.setVoltage(leftVolts);
-		talonRightLeader.setVoltage(rightVolts);
+		talonLeftLeader.setVoltage(-leftVolts);
+		talonRightLeader.setVoltage(-rightVolts);
 		robotDrive.feed();
 	}
 
@@ -179,7 +175,8 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public Pose2d getPoseToObject() {
-		return null;
+		Pose2d pose = m_odometry.getPoseMeters();
+		return new Pose2d(pose.getX(), pose.getY(), pose.getRotation());
 	}
 
 	public void zeroGyroAngle() {

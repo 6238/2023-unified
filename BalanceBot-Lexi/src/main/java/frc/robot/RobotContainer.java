@@ -46,8 +46,8 @@ public class RobotContainer {
     /** The container for the robot. Contains subsystems, OI devices, and commands. */
     public RobotContainer() {
         configureBindings();
+        camera.setDriverMode(false);
         camera.setPipelineIndex(1);
-        camera.setDriverMode(true);
         m_robotDrive.setDefaultCommand(
             Commands.run(() -> m_robotDrive.arcadeDrive(-joystick.getY(), joystick.getX()), m_robotDrive)
         );

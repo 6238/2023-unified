@@ -61,9 +61,6 @@ public class TrajectoryCommand extends RamseteCommand{
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
-        if(last.getX() < 0) {
-            config.setReversed(true);
-        }
         List<Translation2d> internalPoints = new LinkedList<Translation2d>();
         for(int i = 0; i < points.size(); i++) {
             Pair<Double,Double> point = points.get(i);

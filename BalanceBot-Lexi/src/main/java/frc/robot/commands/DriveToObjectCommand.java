@@ -22,8 +22,8 @@ public class DriveToObjectCommand extends TrajectoryCommand {
      * @param object 0 for cone, 1 for cube
      */
     public DriveToObjectCommand(DriveSubsystem driveSubsystem, PhotonCamera camera, int object) {
-        super(driveSubsystem, getObjectPose(object, camera), new LinkedList<Pair<Double,Double>>(),
-            new Pose2d(0.0, 0.0, new Rotation2d(0)), driveSubsystem::getPoseToObject);
+        super(driveSubsystem, new Pose2d(0.0, 0.0, new Rotation2d(0)), new LinkedList<Pair<Double,Double>>(),
+            getObjectPose(object, camera), driveSubsystem::getPoseToObject);
     }
 
     private static Pose2d getObjectPose(int object, PhotonCamera camera) {
@@ -41,27 +41,31 @@ public class DriveToObjectCommand extends TrajectoryCommand {
         camera.setPipelineIndex(object);
 
         var result = camera.getLatestResult();
-        while (!result.hasTargets() || timer < 50) {
+        while (!result.hasTargets() && timer < 50) {
             result = camera.getLatestResult();
             timer++;
         }
         timer = 0;
         
         var target = result.getBestTarget();
+        if(target == null) {
+            return null;
+        }
         double distance = PhotonUtils.calculateDistanceToTargetMeters(
             Constants.cameraHeight, // height off ground
             objectHeight, // height off ground
             Constants.cameraPitch, // pitch relative to ground
             Units.degreesToRadians(target.getPitch())); // to add a buffer for claw
         double yawDelta = target.getYaw();
+        System.out.println(distance);
 
-        return new Pose2d(-distance * Math.cos(Math.PI * yawDelta / 180),
-            -distance * Math.sin(Math.PI * yawDelta / 180),
+        return new Pose2d(distance * Math.cos(Math.PI * yawDelta / 180),
+            distance * Math.sin(Math.PI * yawDelta / 180),
             new Rotation2d(yawDelta));
     }
 
-    @Override
-    public boolean isFinished() {
-        return false;
-    }
+    // @Override
+    // public boolean isFinished() {
+    //     return false;
+    // }
 }
