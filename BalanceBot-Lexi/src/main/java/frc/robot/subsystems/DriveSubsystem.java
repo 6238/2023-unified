@@ -178,6 +178,10 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 	}
 
+	public Pose2d getPoseToObject() {
+		return null;
+	}
+
 	public void zeroGyroAngle() {
         ahrs.zeroYaw();
     }

@@ -16,6 +16,8 @@ import frc.robot.commands.TrajectoryCommand;
 import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -70,7 +72,8 @@ public class RobotContainer {
         double distance = SmartDashboard.getNumber("Distance To Travel", 1);
         LinkedList<Pair<Double, Double>> points = new LinkedList<Pair<Double, Double>>();
         points.push(new Pair<Double,Double>(distance,0.0));
-        return new TrajectoryCommand(m_robotDrive, points, 90.0)
+        return new TrajectoryCommand(m_robotDrive, new Pose2d(0.0, 0.0, new Rotation2d(0)),
+            new LinkedList<Pair<Double,Double>>(), new Pose2d(distance, 0.0, new Rotation2d(0)))
             .andThen(() -> m_robotDrive.tankDriveVolts(0,0));
     }
 
