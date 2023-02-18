@@ -57,7 +57,7 @@ public class TrajectoryCommand extends RamseteCommand{
             .addConstraint(autoVoltageConstraint);
 
         Pair<Double,Double> lastCoords = points.get(points.size() - 1);
-        Pose2d last = new Pose2d(lastCoords.getFirst(), lastCoords.getSecond(), new Rotation2d(rotation));
+        Pose2d last = new Pose2d(lastCoords.getFirst(), lastCoords.getSecond(), Rotation2d.fromDegrees(rotation));
         List<Translation2d> internalPoints = new LinkedList<Translation2d>();
         for(int i = 0; i < points.size() - 1; i++) {
             Pair<Double,Double> point = points.get(i);
