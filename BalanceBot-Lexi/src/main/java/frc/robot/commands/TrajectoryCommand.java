@@ -3,7 +3,6 @@ package frc.robot.commands;
 import java.util.LinkedList;
 import java.util.List;
 
-import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -19,9 +18,10 @@ import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class TrajectoryCommand extends RamseteCommand{
-    public TrajectoryCommand(DriveSubsystem m_robotDrive, List<Pair<Double,Double>> points, double rotation) {
+    protected DriveSubsystem driveSubsystem;
+    public TrajectoryCommand(DriveSubsystem m_robotDrive, List<Translation2d> internalPoints, Pose2d last) {
         super(
-           generateTrajectory(points, rotation, m_robotDrive),
+           generateTrajectory(internalPoints, last, m_robotDrive),
            m_robotDrive::getPose,
            new RamseteController(Constants.kRamseteB, Constants.kRamseteZeta),
            new SimpleMotorFeedforward(
@@ -35,9 +35,10 @@ public class TrajectoryCommand extends RamseteCommand{
            // RamseteCommand passes volts to the callback
            m_robotDrive::tankDriveVolts,
            m_robotDrive);
+        driveSubsystem = m_robotDrive;
     }
 
-    private static Trajectory generateTrajectory(List<Pair<Double,Double>> points, double rotation, DriveSubsystem m_robotDrive) {
+    private static Trajectory generateTrajectory(List<Translation2d> internalPoints, Pose2d last, DriveSubsystem m_robotDrive) {
         var autoVoltageConstraint =
         new DifferentialDriveVoltageConstraint(
             new SimpleMotorFeedforward(
@@ -56,14 +57,6 @@ public class TrajectoryCommand extends RamseteCommand{
             // Apply the voltage constraint
             .addConstraint(autoVoltageConstraint);
 
-        Pair<Double,Double> lastCoords = points.get(points.size() - 1);
-        Pose2d last = new Pose2d(lastCoords.getFirst(), lastCoords.getSecond(), Rotation2d.fromDegrees(rotation));
-        List<Translation2d> internalPoints = new LinkedList<Translation2d>();
-        for(int i = 0; i < points.size() - 1; i++) {
-            Pair<Double,Double> point = points.get(i);
-            internalPoints.add(new Translation2d(point.getFirst(), point.getSecond()));
-        }
-
         Trajectory trajectory =
         TrajectoryGenerator.generateTrajectory(
            // Start at the origin facing the +X direction
@@ -73,7 +66,7 @@ public class TrajectoryCommand extends RamseteCommand{
            // Pass config
            config);
         
-        m_robotDrive.resetOdometry(trajectory.getInitialPose());
+        m_robotDrive.resetPose(trajectory.getInitialPose());
 
         return trajectory;
     }

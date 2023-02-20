@@ -5,13 +5,17 @@ import java.util.LinkedList;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 
-import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveToObjectCommand extends TrajectoryCommand {
     private static int timer = 0;
+    
+    private Pose2d position;
     
     /*
      * Creates a new Object Command using the camera to detect the input object
@@ -20,25 +24,14 @@ public class DriveToObjectCommand extends TrajectoryCommand {
      * @param object 0 for cone, 1 for cube
      */
     public DriveToObjectCommand(DriveSubsystem driveSubsystem, PhotonCamera camera, int object) {
-        super(driveSubsystem, getObjectPosition(object, camera),
-            getObjectRotation(camera));
-        System.out.println("Rotation Value: " + getObjectRotation(camera));
-        LinkedList<Pair<Double,Double>> position = getObjectPosition(object, camera);
-        System.out.println("X Position Value: " + position.getFirst().getFirst());
-        System.out.println("Y Position Value: " + position.getFirst().getSecond());
+        super(driveSubsystem, new LinkedList<Translation2d>(), getObjectPosition(object, camera));
+        position = getObjectPosition(object, camera);
+        System.out.println("Rotation Value: " + position.getRotation());
+        System.out.println("X Position Value: " + position.getX());
+        System.out.println("Y Position Value: " + position.getY());
     }
 
-    private static double getObjectRotation(PhotonCamera camera) {
-        var result = camera.getLatestResult();
-        while (!result.hasTargets() || timer < 50) {
-            timer++;
-            result = camera.getLatestResult();
-        }
-        timer = 0;
-        return -1*(result.getBestTarget().getYaw());
-    }
-
-    private static LinkedList<Pair<Double, Double>> getObjectPosition(int object, PhotonCamera camera) {
+    private static Pose2d getObjectPosition(int object, PhotonCamera camera) {
         double objectHeight = 0;
         switch(object) {
             case 0:
@@ -53,7 +46,7 @@ public class DriveToObjectCommand extends TrajectoryCommand {
         camera.setPipelineIndex(object);
 
         var result = camera.getLatestResult();
-        while (!result.hasTargets() || timer < 50) {
+        while (!result.hasTargets() && timer < 50) {
             result = camera.getLatestResult();
             timer++;
         }
@@ -67,10 +60,14 @@ public class DriveToObjectCommand extends TrajectoryCommand {
             Units.degreesToRadians(target.getPitch())); // to add a buffer for claw
         double yawDelta = target.getYaw();
         
-        LinkedList<Pair<Double, Double>> coordinateList = new LinkedList<Pair<Double, Double>>();
-        coordinateList.add(new Pair<Double, Double>(distance,
-            distance * Math.sin(Math.PI * yawDelta / 180)));
+        return new Pose2d(distance * Math.cos(Math.PI * yawDelta / 180),
+            distance * Math.sin(Math.PI * yawDelta / 180),
+            new Rotation2d(yawDelta));
+    }
 
-        return coordinateList;
+    @Override
+    public boolean isFinished() {
+        return driveSubsystem.getPose().getX() - position.getX() < 0.5
+            && driveSubsystem.getPose().getY() - position.getY() < 0.5;
     }
 }
