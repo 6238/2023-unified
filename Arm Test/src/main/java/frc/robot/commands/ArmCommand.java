@@ -38,11 +38,11 @@ public class ArmCommand extends CommandBase {
 
     @Override
     public void execute() {
-        armSubsystem.raiseArm(0.40 * direction);
+        armSubsystem.raiseArm(0.25 * direction);
     }
 
     @Override
     public void end(boolean interrupt) {
-        armSubsystem.reset();
+        armSubsystem.resetPulley();
     }
 }

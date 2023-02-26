@@ -45,12 +45,19 @@ public class RobotContainer {
     }
   
     private void configureBindings() {
-        // new JoystickButton(joystick, Constants.OpenClawBttn)
-        //     .onTrue(Commands.runOnce(() -> m_ArmSubsystem.extendSolenoid()).andThen())
-        //     .onFalse(Commands.runOnce(() -> m_ArmSubsystem.retractSolenoid()));
         new JoystickButton(joystick, Constants.liftArmBttn)
-            .whileTrue(new ArmCommand(m_ArmSubsystem, true));
+            .whileTrue(Commands.run(() -> m_ArmSubsystem.raiseArm(0.25)))
+            .onFalse(Commands.run(() -> m_ArmSubsystem.resetPulley()));
         new JoystickButton(joystick, Constants.lowerArmBttn)
-            .whileTrue(new ArmCommand(m_ArmSubsystem, false));
+            .whileTrue(Commands.run(() -> m_ArmSubsystem.raiseArm(-0.25)))
+            .onFalse(Commands.run(() -> m_ArmSubsystem.resetPulley()));
+        new JoystickButton(joystick, Constants.extendArmBttn)
+            .whileTrue(Commands.run(() -> m_ArmSubsystem.extendArm(0.25)))
+            .onFalse(Commands.run(() -> m_ArmSubsystem.resetTelescope()));
+        new JoystickButton(joystick, Constants.retractArmBttn)
+            .whileTrue(Commands.run(() -> m_ArmSubsystem.extendArm(-0.25)))
+            .onFalse(Commands.run(() -> m_ArmSubsystem.resetTelescope()));
+        new JoystickButton(joystick, Constants.OpenClawBttn)
+            .onTrue(Commands.runOnce(() -> m_ArmSubsystem.toggleClaw()));
     }
 }
