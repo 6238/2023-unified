@@ -14,31 +14,19 @@ public class ArmCommand extends CommandBase {
     private final ArmSubsystem armSubsystem; 
 
     // Multiplier for direction
-    private int direction;
+    private int armDirection;
+    private int telescopeDirection;
 
-    /*
-     * Creates a new Object Command using the camera to detect the input object
-     * @param driveSubsystem the driveSubsystem
-     * @param camera the camera
-     * @param object 0 for cone, 1 for cube
-     */
-    public ArmCommand(ArmSubsystem armSubsystem, boolean up) {
+    public ArmCommand(ArmSubsystem armSubsystem, boolean isRaisingArm, boolean isExtendingTelescope) {
         this.armSubsystem = armSubsystem;
-        if (up) {
-            direction = 1;
-        } else {
-            direction = -1;
-        }
-    }
-
-    @Override
-    public void initialize() {
-        
+        armDirection = isRaisingArm ? 1 : -1;
+        telescopeDirection = isExtendingTelescope ? 1 : -1;
     }
 
     @Override
     public void execute() {
-        armSubsystem.raiseArm(0.40 * direction);
+        armSubsystem.raiseArm(0.40 * armDirection);
+        telescopeDirection.extendTelescope(0.40 * telescopeDirection);
     }
 
     @Override

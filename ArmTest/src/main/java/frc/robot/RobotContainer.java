@@ -48,9 +48,13 @@ public class RobotContainer {
         // new JoystickButton(joystick, Constants.OpenClawBttn)
         //     .onTrue(Commands.runOnce(() -> m_ArmSubsystem.extendSolenoid()).andThen())
         //     .onFalse(Commands.runOnce(() -> m_ArmSubsystem.retractSolenoid()));
-        new JoystickButton(joystick, Constants.liftArmBttn)
-            .whileTrue(new ArmCommand(m_ArmSubsystem, true));
+        new JoystickButton(joystick, Constants.raiseArmBttn)
+            .whileTrue(new ArmCommand(m_ArmSubsystem, true, false));
         new JoystickButton(joystick, Constants.lowerArmBttn)
-            .whileTrue(new ArmCommand(m_ArmSubsystem, false));
+            .whileTrue(new ArmCommand(m_ArmSubsystem, false, false));
+        new JoystickButton(joystick, Constants.raiseArmBttn)
+            .whileTrue(new ArmCommand(m_ArmSubsystem, false, true));
+        new JoystickButton(joystick, Constants.lowerArmBttn)
+            .whileTrue(new ArmCommand(m_ArmSubsystem, false, false));
     }
 }
