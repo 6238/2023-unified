@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -19,12 +20,16 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final Joystick joystick = new Joystick(0);
+    private final DriveSubsystem driveSubsystem = new DriveSubsystem();
 
     public RobotContainer() {
         configureBindings();
     }
 
     private void configureBindings() {
+        driveSubsystem.setDefaultCommand(
+            Commands.run(() -> driveSubsystem.arcadeDrive(-joystick.getY(), joystick.getX()), driveSubsystem));
+
       new JoystickButton(joystick, Constants.raiseArmBttn)
           .whileTrue(Commands.run(() -> armSubsystem.raiseArm(0.25)))
           .onFalse(Commands.run(() -> armSubsystem.resetPulley()));
