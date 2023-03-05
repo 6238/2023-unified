@@ -21,10 +21,15 @@ public class ArmSubsystem extends SubsystemBase{
     private final CANSparkMax m_pulleyMotor;
     private final CANSparkMax m_telescopeMotor;
 
+    private boolean isSolenoidOn;
+
     public ArmSubsystem() {
         solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
         m_pulleyMotor = new CANSparkMax(Constants.pulleyID, MotorType.kBrushless);
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
+
+        isSolenoidOn = false;
+        solenoid.set(isSolenoidOn);
     }
 
     // A positive rate raises the arm.
@@ -42,16 +47,16 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopeMotor.set(rate);
     }
 
-    public void reset() {
+    public void resetPulley() {
         m_pulleyMotor.set(0);
+    }
+
+    public void resetTelescope() {
         m_telescopeMotor.set(0);
     }
-
-    public void extendSolenoid() {
-        solenoid.set(true);
-    }
-
-    public void retractSolenoid() {
-        solenoid.set(false);
+    
+    public void toggleClaw() {
+        isSolenoidOn = !isSolenoidOn;
+        solenoid.set(isSolenoidOn);
     }
 }

@@ -7,6 +7,8 @@ package frc.robot;
 import frc.robot.subsystems.ArmSubsystem;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -15,28 +17,35 @@ import edu.wpi.first.wpilibj2.command.Command;
  * subsystems, commands, and trigger mappings) should be declared here.
  */
 public class RobotContainer {
-  // The robot's subsystems and commands are defined here...
-  private final ArmSubsystem m_exampleSubsystem = new ArmSubsystem();
+    private final ArmSubsystem armSubsystem = new ArmSubsystem();
+    private final Joystick joystick = new Joystick(0);
 
-  // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final Joystick m_driverController = new Joystick(0);
+    public RobotContainer() {
+        configureBindings();
+    }
 
-  /** The container for the robot. Contains subsystems, OI devices, and commands. */
-  public RobotContainer() {
-    // Configure the trigger bindings
-    configureBindings();
-  }
-
-  private void configureBindings() {
-
-  }
-
-  /**
-   * Use this to pass the autonomous command to the main {@link Robot} class.
-   *
-   * @return the command to run in autonomous
-   */
-  public Command getAutonomousCommand() {
-    return null;
-  }
+    private void configureBindings() {
+      new JoystickButton(joystick, Constants.raiseArmBttn)
+          .whileTrue(Commands.run(() -> armSubsystem.raiseArm(0.25)))
+          .onFalse(Commands.run(() -> armSubsystem.resetPulley()));
+  
+      new JoystickButton(joystick, Constants.lowerArmBttn)
+          .whileTrue(Commands.run(() -> armSubsystem.raiseArm(-0.25)))
+          .onFalse(Commands.run(() -> armSubsystem.resetPulley()));
+  
+      new JoystickButton(joystick, Constants.extendArmBttn)
+          .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(0.25)))
+          .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
+  
+      new JoystickButton(joystick, Constants.retractArmBttn)
+          .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(-0.25)))
+          .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
+  
+      new JoystickButton(joystick, Constants.OpenClawBttn)
+          .onTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
+    }
+  
+    public Command getAutonomousCommand() {
+        return null;
+    }
 }

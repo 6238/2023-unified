@@ -1,7 +1,5 @@
 package frc.robot;
 
-import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
-
 public class Constants {
     public final static int pulleyID = 1;
     public final static int telescopeID = 2;
