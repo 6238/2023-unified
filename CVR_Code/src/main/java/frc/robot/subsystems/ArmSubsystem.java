@@ -20,6 +20,8 @@ public class ArmSubsystem extends SubsystemBase{
     private final Solenoid solenoid;
     private final CANSparkMax m_pulleyMotor;
     private final CANSparkMax m_telescopeMotor;
+    private double m_pulleySpeed;
+    private double m_telescopeSpeed;
 
     private boolean isSolenoidOn;
 
@@ -27,7 +29,10 @@ public class ArmSubsystem extends SubsystemBase{
         solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
         m_pulleyMotor = new CANSparkMax(Constants.pulleyID, MotorType.kBrushless);
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
-
+        m_pulleySpeed = 0;
+        m_telescopeSpeed = 0; 
+        m_pulleyMotor.setSmartCurrentLimit(1,60);
+        m_telescopeMotor.setSmartCurrentLimit(1,60);
         isSolenoidOn = false;
         solenoid.set(isSolenoidOn);
     }
@@ -35,28 +40,33 @@ public class ArmSubsystem extends SubsystemBase{
     // A positive rate raises the arm.
     // A negative rate lowers the arm.
     public void raiseArm(double rate) {
-        rate = Math.abs(rate) <= 0.5 ? rate : 0.5 * rate / Math.abs(rate); 
-        m_pulleyMotor.set(rate);
+        m_pulleySpeed = rate;
     }
 
-
+ 
     // A positive rate extends the telescope.
     // A negative rate retracts the telescope.
     public void extendTelescope(double rate) {
-        rate = Math.abs(rate) <= 0.5 ? rate : 0.5 * rate / Math.abs(rate);
-        m_telescopeMotor.set(rate);
+        m_telescopeSpeed = rate;
     }
 
     public void resetPulley() {
-        m_pulleyMotor.set(0);
+        m_pulleySpeed = 0;
     }
 
     public void resetTelescope() {
-        m_telescopeMotor.set(0);
+        m_telescopeSpeed = 0;
     }
     
     public void toggleClaw() {
         isSolenoidOn = !isSolenoidOn;
         solenoid.set(isSolenoidOn);
     }
+    @Override
+    public void periodic() {
+        System.out.println("pulley speed"+ m_pulleySpeed);
+        m_pulleyMotor.set(m_pulleySpeed);
+        m_telescopeMotor.set(m_telescopeSpeed);
+    }
+  
 }

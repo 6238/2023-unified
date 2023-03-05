@@ -4,11 +4,12 @@ public class Constants {
     public final static int pulleyID = 1;
     public final static int telescopeID = 2;
     
-    public final static int raiseArmBttn = 6;
-    public final static int lowerArmBttn = 4;
-    public final static int extendArmBttn = 5;
-    public final static int retractArmBttn = 3;
+    public final static int raiseArmBttn = 12;
+    public final static int lowerArmBttn = 10;
+    public final static int extendArmBttn = 9;
+    public final static int retractArmBttn = 11;
     public static final int OpenClawBttn = 1;
+    public final static int HomeBttn = 5;
 
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;
