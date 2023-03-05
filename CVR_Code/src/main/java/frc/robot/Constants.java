@@ -9,4 +9,15 @@ public class Constants {
     public final static int extendArmBttn = 5;
     public final static int retractArmBttn = 3;
     public static final int OpenClawBttn = 1;
+
+    public final static double kCountsPerRev = 2048;
+    public final static double kGearRatio = 20;
+    public final static double kWheelRadiusInches = 2.75;
+
+    public final static int LEFT_LEADER_ID = 31;
+    public final static int LEFT_FOLLOWER_ID_ONE = 33;
+    public final static int LEFT_FOLLOWER_ID_TWO = 35;
+    public final static int RIGHT_LEADER_ID = 30;
+    public final static int RIGHT_FOLLOWER_ID_ONE = 32;
+    public final static int RIGHT_FOLLOWER_ID_TWO = 34;
 }
