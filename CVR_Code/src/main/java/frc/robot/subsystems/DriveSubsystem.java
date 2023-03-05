@@ -133,8 +133,8 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void resetEncoders() {
-		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition();
-		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition();
+		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition(); // J.T. 2023-03-04 not sure that these should be "+=" instead of "="
+		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition(); // J.t. 2023-03-04 not sure that these should be "+=" instead of "="
 	}
 
 	public double getPitch() {
