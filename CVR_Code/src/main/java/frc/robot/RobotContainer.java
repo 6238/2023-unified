@@ -51,11 +51,10 @@ public class RobotContainer {
              .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
   
         new JoystickButton(joystick, Constants.OpenClawBttn)
-              .onTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
+              .whileTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
 
         new JoystickButton(joystick, Constants.HomeBttn)
-            .onTrue(new HomeCommand(armSubsystem))
-            .;
+            .onTrue(new HomeCommand(armSubsystem));
     
     }
   

@@ -13,6 +13,7 @@ import org.photonvision.PhotonCamera;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -30,7 +31,8 @@ public class ArmSubsystem extends SubsystemBase{
     private final RelativeEncoder pulleyEncoder;
 
     public ArmSubsystem() {
-        solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
+        Compressor pcmCompressor = new Compressor(5, PneumaticsModuleType.CTREPCM);
+        solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 4);
         m_pulleyMotor = new CANSparkMax(Constants.pulleyID, MotorType.kBrushless);
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
         m_pulleySpeed = 0;
@@ -74,8 +76,12 @@ public class ArmSubsystem extends SubsystemBase{
     }
     
     public void toggleClaw() {
+        /*
         isSolenoidOn = !isSolenoidOn;
         solenoid.set(isSolenoidOn);
+        */
+        System.out.println("Toggle Claw");
+        solenoid.set(false);
     }
 
     public boolean isTelescopeStalled() {
