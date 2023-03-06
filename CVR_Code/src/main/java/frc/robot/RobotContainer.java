@@ -54,7 +54,8 @@ public class RobotContainer {
               .onTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
 
         new JoystickButton(joystick, Constants.HomeBttn)
-            .whileTrue (new HomeCommand(armSubsystem));
+            .onTrue(new HomeCommand(armSubsystem))
+            .;
     
     }
   
