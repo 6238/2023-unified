@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import frc.robot.commands.DriveManualCommand;
 import frc.robot.commands.HomeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -31,8 +32,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        driveSubsystem.setDefaultCommand(
-            Commands.run(() -> driveSubsystem.arcadeDrive(-joystick.getY(), joystick.getX()), driveSubsystem));
+        driveSubsystem.setDefaultCommand(new DriveManualCommand(driveSubsystem, joystick));
 
         new JoystickButton(joystick, Constants.raiseArmBttn)
             .whileTrue(Commands.run(() -> armSubsystem.raiseArm(0.25)))
