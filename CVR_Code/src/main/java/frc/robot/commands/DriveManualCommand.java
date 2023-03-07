@@ -75,3 +75,4 @@ public class DriveManualCommand extends CommandBase {
         return minY + ((maxY - minY) / (maxX - minX)) * (input - minX);
     }
 }
+

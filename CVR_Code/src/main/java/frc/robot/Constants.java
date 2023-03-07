@@ -10,6 +10,7 @@ public class Constants {
     public final static int retractArmBttn = 11;
     public static final int OpenClawBttn = 1;
     public final static int HomeBttn = 5;
+    public final static int ShelfBttn = 6;
 
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;

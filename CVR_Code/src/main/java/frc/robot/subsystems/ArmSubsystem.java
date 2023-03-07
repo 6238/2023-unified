@@ -122,6 +122,15 @@ public class ArmSubsystem extends SubsystemBase{
                 pulleySpeedLimited = 0;
             }
         }
+        if (pulleyPosition>118){
+            if (pulleySpeedLimited < 0)
+            pulleySpeedLimited=0;
+        }
+        
+        if (telescopePosition>97) {
+            if (telescopeSpeedLimited>0)
+            telescopeSpeedLimited = 0;
+        }
 
         m_pulleyMotor.set(pulleySpeedLimited);
         m_telescopeMotor.set(telescopeSpeedLimited);
