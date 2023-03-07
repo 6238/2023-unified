@@ -15,6 +15,10 @@ public class DriveManualCommand extends CommandBase {
     private long prevSpeedTime;
     private double prevSpeed;
 
+    private final double ignoreThreshold = 0.05;
+    private final double maxVoltage = 1.0;
+    private final double minVoltage = 0.35; 
+
     public DriveManualCommand(DriveSubsystem driveSubsystem, Joystick joystick) {
         this.joystick = joystick;
         this.driveSubsystem = driveSubsystem;
@@ -30,6 +34,7 @@ public class DriveManualCommand extends CommandBase {
     public void execute() {
         long timePassed = (System.currentTimeMillis() - prevSpeedTime) / 1000;
         double forwardSpeed = joystick.getY();
+        double rotateSpeed = joystick.getX();
         double change;
 
         if (prevSpeed > 0) {
@@ -43,9 +48,30 @@ public class DriveManualCommand extends CommandBase {
         }
 
         forwardSpeed += change;
-        driveSubsystem.arcadeDrive(forwardSpeed, joystick.getX());
+
+        if (forwardSpeed > ignoreThreshold) {
+            forwardSpeed = scale(forwardSpeed, ignoreThreshold, 1.0, minVoltage, maxVoltage);
+        } else if (forwardSpeed < -ignoreThreshold) {
+            forwardSpeed = scale(forwardSpeed, -1.0, -ignoreThreshold, -maxVoltage, -minVoltage);
+        } else {
+            forwardSpeed = 0;
+        }
+
+        if (rotateSpeed > ignoreThreshold) {
+            rotateSpeed = scale(rotateSpeed, ignoreThreshold, 1.0, minVoltage, maxVoltage);
+        } else if (forwardSpeed < -ignoreThreshold) {
+            rotateSpeed = scale(rotateSpeed, -1.0, -ignoreThreshold, -maxVoltage, -minVoltage);
+        } else {
+            rotateSpeed = 0;
+        }
+
+        driveSubsystem.arcadeDrive(forwardSpeed, rotateSpeed);
         prevSpeedTime = System.currentTimeMillis();
         prevSpeed = forwardSpeed;
+    }
 
+    // maps [minX, maxX] to [minY, maxY]
+    private double scale(double input, double minX, double maxX, double minY, double maxY) {
+        return minY + ((maxY - minY) / (maxX - minX)) * (input - minX);
     }
 }
