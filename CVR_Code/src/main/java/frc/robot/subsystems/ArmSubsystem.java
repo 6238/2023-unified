@@ -31,8 +31,7 @@ public class ArmSubsystem extends SubsystemBase{
     private final RelativeEncoder pulleyEncoder;
 
     public ArmSubsystem() {
-        Compressor pcmCompressor = new Compressor(5, PneumaticsModuleType.CTREPCM);
-        solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 4);
+        solenoid = new Solenoid(5,PneumaticsModuleType.CTREPCM, 4);
         m_pulleyMotor = new CANSparkMax(Constants.pulleyID, MotorType.kBrushless);
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
         m_pulleySpeed = 0;
@@ -76,12 +75,9 @@ public class ArmSubsystem extends SubsystemBase{
     }
     
     public void toggleClaw() {
-        /*
+        System.out.println("Toggle Claw " + isSolenoidOn);
         isSolenoidOn = !isSolenoidOn;
         solenoid.set(isSolenoidOn);
-        */
-        System.out.println("Toggle Claw");
-        solenoid.set(false);
     }
 
     public boolean isTelescopeStalled() {
