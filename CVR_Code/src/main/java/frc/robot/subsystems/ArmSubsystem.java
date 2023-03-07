@@ -15,6 +15,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -28,6 +29,8 @@ public class ArmSubsystem extends SubsystemBase{
 
     private final RelativeEncoder telescopeEncoder;
     private final RelativeEncoder pulleyEncoder;
+    private double m_pulleyPositionHome;
+    private double m_telescopePostionHome;
 
     public ArmSubsystem() {
         solenoid = new Solenoid(5,PneumaticsModuleType.CTREPCM, 4);
@@ -39,6 +42,8 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopeMotor.setSmartCurrentLimit(1,60);
         isSolenoidOn = false;
         solenoid.set(isSolenoidOn);
+        m_pulleyPositionHome = 0;
+        m_telescopePostionHome = 0;
 
         pulleyEncoder = m_pulleyMotor.getEncoder();
         telescopeEncoder = m_telescopeMotor.getEncoder();
@@ -87,10 +92,29 @@ public class ArmSubsystem extends SubsystemBase{
         return Math.abs(pulleyEncoder.getVelocity()) < 0.1;
     }
 
+    public void resetHome() {
+        m_pulleyPositionHome = pulleyEncoder.getPosition();
+        m_telescopePostionHome = telescopeEncoder.getPosition();
+    }
+
+
     @Override
     public void periodic() {
-        m_pulleyMotor.set(m_pulleySpeed);
+        double pulleyPosition = -pulleyEncoder.getPosition()+m_pulleyPositionHome;
+        double telescopePosition = telescopeEncoder.getPosition()-m_telescopePostionHome;
+        double pulleySpeedLimited = m_pulleySpeed;
+        
+        if (pulleyPosition<20 && telescopePosition>80){
+            //pulleySpeedLimited = 0;
+            System.out.println("would limit pulley speed");
+        }
+
+        m_pulleyMotor.set(pulleySpeedLimited);
         m_telescopeMotor.set(m_telescopeSpeed);
+        
+        SmartDashboard.putNumber("Pulley Position", pulleyPosition);
+        SmartDashboard.putNumber("Telescope Position", telescopePosition);
+        
     }
   
 }
