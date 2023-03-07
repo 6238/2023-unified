@@ -103,18 +103,32 @@ public class ArmSubsystem extends SubsystemBase{
         double pulleyPosition = -pulleyEncoder.getPosition()+m_pulleyPositionHome;
         double telescopePosition = telescopeEncoder.getPosition()-m_telescopePostionHome;
         double pulleySpeedLimited = m_pulleySpeed;
+        double telescopeSpeedLimited = m_telescopeSpeed;
         
-        if (pulleyPosition<20 && telescopePosition>80){
-            //pulleySpeedLimited = 0;
-            System.out.println("would limit pulley speed");
+        if (pulleyPosition>80 && telescopePosition>36){
+          if (telescopeSpeedLimited > 0){
+                telescopeSpeedLimited = 0;
+            }
+            if (pulleySpeedLimited < 0) {
+                pulleySpeedLimited = 0;
+            }
+        } 
+
+        if (pulleyPosition<20 && telescopePosition>60){
+            if (telescopeSpeedLimited > 0){
+                telescopeSpeedLimited = 0;
+            }
+            if (pulleySpeedLimited > 0) {
+                pulleySpeedLimited = 0;
+            }
         }
 
         m_pulleyMotor.set(pulleySpeedLimited);
-        m_telescopeMotor.set(m_telescopeSpeed);
+        m_telescopeMotor.set(telescopeSpeedLimited);
         
         SmartDashboard.putNumber("Pulley Position", pulleyPosition);
         SmartDashboard.putNumber("Telescope Position", telescopePosition);
         
     }
   
-}
+    }
