@@ -16,7 +16,7 @@ public class DriveManualCommand extends CommandBase {
 
     private final double ignoreThreshold = 0.05;
     private final double maxVoltage = 1.0;
-    private final double minVoltage = 0.35;   
+    private final double minVoltage = 0.35; 
 
     public DriveManualCommand(DriveSubsystem driveSubsystem, Joystick joystick) {
         this.joystick = joystick;
