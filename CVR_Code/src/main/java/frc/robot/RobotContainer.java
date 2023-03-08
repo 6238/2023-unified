@@ -4,7 +4,6 @@
 
 package frc.robot;
 
-import frc.robot.IOConstants.IOConstants;
 import frc.robot.commands.HomeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -33,26 +32,26 @@ public class RobotContainer {
         driveSubsystem.setDefaultCommand(
             Commands.run(() -> driveSubsystem.arcadeDrive(-joystick.getY(), joystick.getX()), driveSubsystem));
 
-        new JoystickButton(joystick, IOConstants.raiseArmBttn)
+        new JoystickButton(joystick, Constants.raiseArmBttn)
             .whileTrue(Commands.run(() -> armSubsystem.raiseArm(1)))
             .onFalse(Commands.run(() -> armSubsystem.resetPulley()));
   
-        new JoystickButton(joystick, IOConstants.lowerArmBttn)
+        new JoystickButton(joystick, Constants.lowerArmBttn)
             .whileTrue(Commands.run(() -> armSubsystem.raiseArm(-1)))
             .onFalse(Commands.run(() -> armSubsystem.resetPulley()));
   
-        new JoystickButton(joystick, IOConstants.extendArmBttn)
+        new JoystickButton(joystick, Constants.extendArmBttn)
             .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(1)))
             .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
   
-        new JoystickButton(joystick, IOConstants.retractArmBttn)
+        new JoystickButton(joystick, Constants.retractArmBttn)
              .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(-1)))
              .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
   
-        new JoystickButton(joystick, IOConstants.OpenClawBttn)
+        new JoystickButton(joystick, Constants.OpenClawBttn)
               .whileTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
 
-        new JoystickButton(joystick, IOConstants.HomeBttn)
+        new JoystickButton(joystick, Constants.HomeBttn)
             .onTrue(new HomeCommand(armSubsystem));
 
     }

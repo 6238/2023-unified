@@ -3,7 +3,6 @@ package frc.robot.commands;
 import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.IOConstants.SmartDashboardBoolean;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveManualCommand extends CommandBase {
@@ -12,15 +11,12 @@ public class DriveManualCommand extends CommandBase {
     private final double maxAcceleration = 0.8; // per 1 second
     private final double maxDecceleration = 0.3; // per 1 second
 
-    private final SmartDashboardBoolean goSlow = new SmartDashboardBoolean("Go Slow", false);
-
     private long prevSpeedTime;
     private double prevSpeed;
 
     private final double ignoreThreshold = 0.05;
     private final double maxVoltage = 1.0;
-    private final double minVoltage = 0.35;
-    private final double slowMaxVoltage = 0.60;
+    private final double minVoltage = 0.35; 
 
     public DriveManualCommand(DriveSubsystem driveSubsystem, Joystick joystick) {
         this.joystick = joystick;
@@ -50,7 +46,6 @@ public class DriveManualCommand extends CommandBase {
                 maxDecceleration * timePassed); 
         }
 
-        double maxVoltage = goSlow.get() ? this.slowMaxVoltage : this.maxVoltage;
         forwardSpeed += change;
 
         if (forwardSpeed > ignoreThreshold) {
