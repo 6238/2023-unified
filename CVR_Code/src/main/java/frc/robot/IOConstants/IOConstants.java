@@ -8,4 +8,5 @@ public class IOConstants {
     public static final int OpenClawBttn = 1;
     public final static int HomeBttn = 5;
     public final static int ShelfBttn = 6;
+    public final static int balanceBttn = 2;
 }

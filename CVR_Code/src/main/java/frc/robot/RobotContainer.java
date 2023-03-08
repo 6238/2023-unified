@@ -5,9 +5,12 @@
 package frc.robot;
 
 import frc.robot.IOConstants.IOConstants;
+import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.HomeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+
+import javax.swing.text.BadLocationException;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -54,6 +57,9 @@ public class RobotContainer {
 
         new JoystickButton(joystick, IOConstants.HomeBttn)
             .onTrue(new HomeCommand(armSubsystem));
+
+        new JoystickButton(joystick, IOConstants.balanceBttn)
+            .whileTrue(new BalanceCommand(driveSubsystem));
 
     }
   
