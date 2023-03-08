@@ -1,7 +1,6 @@
 package frc.robot.commands;
 import frc.robot.subsystems.ArmSubsystem;
 
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
 /** An example command that uses an example subsystem. */

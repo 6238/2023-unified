@@ -1,18 +1,8 @@
 package frc.robot.subsystems;
 
-import java.util.ArrayDeque;
-import java.util.Deque;
-import java.util.concurrent.ThreadPoolExecutor.CallerRunsPolicy;
-
-import com.ctre.phoenix.music.*;
-import com.kauailabs.navx.*;
-import com.revrobotics.*;
-import org.photonvision.PhotonCamera;
-
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
