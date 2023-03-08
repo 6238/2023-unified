@@ -1,10 +1,10 @@
-package frc.robot;
+package frc.robot.IOConstants;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-public class SmartDashboardParam {
+public class SmartDashboardNumeric {
     private final String name;
-    public SmartDashboardParam (String name, double defaultValue) {
+    public SmartDashboardNumeric (String name, double defaultValue) {
         this.name = name;
         double uiValue = SmartDashboard.getNumber(this.name, defaultValue);
         SmartDashboard.putNumber(this.name, uiValue);

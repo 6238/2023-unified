@@ -17,10 +17,10 @@ import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.SmartDashboardParam;
+import frc.robot.IOConstants.SmartDashboardNumeric;
 
 public class DriveSubsystem extends SubsystemBase {
-	private final SmartDashboardParam currentLimit = new SmartDashboardParam("currentLimiter", 16); // 0.18
+	private final SmartDashboardNumeric currentLimit = new SmartDashboardNumeric("currentLimiter", 16); // 0.18
 
 	private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
     private final WPI_TalonFX talonLeftFollowerOne = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_ONE);
