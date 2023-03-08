@@ -133,8 +133,8 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void resetEncoders() {
-		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition(); // J.T. 2023-03-04 not sure that these should be "+=" instead of "="
-		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition(); // J.t. 2023-03-04 not sure that these should be "+=" instead of "="
+		leftEncoderOffset = talonLeftLeader.getSelectedSensorPosition(); // J.T. 2023-03-04 not sure that these should be "+=" instead of "="
+		rightEncoderOffset = talonRightLeader.getSelectedSensorPosition(); // J.t. 2023-03-04 not sure that these should be "+=" instead of "="
 	}
 
 	public double getPitch() {
@@ -157,10 +157,5 @@ public class DriveSubsystem extends SubsystemBase {
 			talonRightFollowerOne.setNeutralMode(NeutralMode.Coast);
 			talonRightFollowerTwo.setNeutralMode(NeutralMode.Coast);
 		}
-	}
-
-	public Pose2d getPoseToObject() {
-		Pose2d pose = m_odometry.getPoseMeters();
-		return new Pose2d(pose.getX(), pose.getY(), pose.getRotation());
 	}
 }
