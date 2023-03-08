@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.HomeCommand;
+import frc.robot.commands.ArmPresetCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.PowerSubsystem;
@@ -55,6 +56,19 @@ public class RobotContainer {
 
         new JoystickButton(joystick, Constants.HomeBttn)
             .onTrue(new HomeCommand(armSubsystem));
+
+        new JoystickButton(joystick, Constants.ShelfBttn)
+            .onTrue(new ArmPresetCommand(armSubsystem, 81,77));
+        
+            new JoystickButton(joystick, Constants.GridHighBttn)
+            .onTrue(new ArmPresetCommand(armSubsystem, 60,97));
+
+        new JoystickButton(joystick, Constants.GridLowBttn)
+            .onTrue(new ArmPresetCommand(armSubsystem, 130,0));
+
+        new JoystickButton(joystick, Constants.GridMidBttn)
+            .onTrue(new ArmPresetCommand(armSubsystem, 49,32));
+        
 
     }
   

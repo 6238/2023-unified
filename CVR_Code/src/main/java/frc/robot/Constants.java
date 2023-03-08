@@ -11,6 +11,9 @@ public class Constants {
     public static final int OpenClawBttn = 1;
     public final static int HomeBttn = 5;
     public final static int ShelfBttn = 6;
+    public final static int GridHighBttn = 3;
+    public final static int GridMidBttn = 4;
+    public final static int GridLowBttn = 2;
 
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;

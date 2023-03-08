@@ -53,7 +53,7 @@ public class ArmSubsystem extends SubsystemBase{
     public void raiseArm(double rate) {
         m_pulleySpeed = rate;
     }
- 
+
     // A positive rate extends the telescope.
     // A negative rate retracts the telescope.
     public void extendTelescope(double rate) {
@@ -74,6 +74,14 @@ public class ArmSubsystem extends SubsystemBase{
         solenoid.set(isSolenoidOn);
     }
 
+    public double getPulleyPosition(){
+        return -pulleyEncoder.getPosition()+m_pulleyPositionHome;
+    }
+
+    public double getTelescopePosition(){
+        return telescopeEncoder.getPosition()-m_telescopePostionHome;
+    }
+
     public boolean isTelescopeStalled() {
         return Math.abs(telescopeEncoder.getVelocity()) < 0.1;
     }
@@ -87,11 +95,13 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopePostionHome = telescopeEncoder.getPosition();
     }
 
+    
+
 
     @Override
     public void periodic() {
-        double pulleyPosition = -pulleyEncoder.getPosition()+m_pulleyPositionHome;
-        double telescopePosition = telescopeEncoder.getPosition()-m_telescopePostionHome;
+        double pulleyPosition = getPulleyPosition();
+        double telescopePosition = getTelescopePosition();
         double pulleySpeedLimited = m_pulleySpeed;
         double telescopeSpeedLimited = m_telescopeSpeed;
         
@@ -112,7 +122,7 @@ public class ArmSubsystem extends SubsystemBase{
                 pulleySpeedLimited = 0;
             }
         }
-        if (pulleyPosition>118){
+        if (pulleyPosition>130){
             if (pulleySpeedLimited < 0)
             pulleySpeedLimited=0;
         }
