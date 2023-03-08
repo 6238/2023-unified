@@ -9,7 +9,6 @@ public class HomeCommand extends CommandBase {
   @SuppressWarnings({"PMD.UnusedPrivateField", "PMD.SingularField"})
   private final ArmSubsystem m_subsystem;
 
-
   private final long maxTimer = 500;
   private long startTime;
 

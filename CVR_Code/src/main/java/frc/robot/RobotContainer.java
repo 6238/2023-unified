@@ -7,6 +7,7 @@ package frc.robot;
 import frc.robot.commands.HomeCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.subsystems.PowerSubsystem;
 
 import java.sql.PreparedStatement;
 
@@ -25,6 +26,7 @@ public class RobotContainer {
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final Joystick joystick = new Joystick(0);
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private final PowerSubsystem powerSubsystem = new PowerSubsystem();
 
     public RobotContainer() {
         configureBindings();
