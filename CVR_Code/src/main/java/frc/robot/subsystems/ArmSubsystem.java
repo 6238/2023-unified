@@ -126,8 +126,6 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopeMotor.set(telescopeSpeedLimited);
         
         SmartDashboard.putNumber("Pulley Position", pulleyPosition);
-        SmartDashboard.putNumber("Telescope Position", telescopePosition);
-        
+        SmartDashboard.putNumber("Telescope Position", telescopePosition);        
     }
-  
-    }
+}
