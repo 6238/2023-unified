@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -41,6 +43,13 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public DriveSubsystem() {
 		PID_ID = 0;
+		talonLeftLeader.configAllSettings(new TalonFXConfiguration());
+		talonLeftFollowerOne.configAllSettings(new TalonFXConfiguration());
+		talonLeftFollowerTwo.configAllSettings(new TalonFXConfiguration());
+		talonRightLeader.configAllSettings(new TalonFXConfiguration());
+		talonRightFollowerOne.configAllSettings(new TalonFXConfiguration());
+		talonRightFollowerTwo.configAllSettings(new TalonFXConfiguration());
+
         talonLeftFollowerOne.follow(talonLeftLeader);
         talonLeftFollowerTwo.follow(talonLeftLeader);
 
@@ -58,16 +67,16 @@ public class DriveSubsystem extends SubsystemBase {
         talonRightFollowerOne.setNeutralMode(NeutralMode.Brake);
         talonRightFollowerTwo.setNeutralMode(NeutralMode.Brake);
 
-        talonLeftLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
-        talonRightLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
+        //talonLeftLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
+        //talonRightLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
 
-        talonLeftLeader.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
+      	/*talonLeftLeader.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
         talonLeftFollowerOne.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
         talonLeftFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
         talonRightLeader.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
         talonRightFollowerOne.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
         talonRightFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-
+*/
 		resetEncoders();
 		ahrs.zeroYaw();
 
