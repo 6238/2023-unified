@@ -6,6 +6,8 @@ package frc.robot;
 
 import frc.robot.commands.HomeCommand;
 import frc.robot.commands.ArmPresetCommand;
+import frc.robot.commands.BalanceCommand;
+import frc.robot.commands.DriveManualCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -31,6 +33,7 @@ public class RobotContainer {
 
     private void configureBindings() {
         driveSubsystem.setDefaultCommand(
+            //new DriveManualCommand(driveSubsystem, joystick));
             Commands.run(() -> driveSubsystem.arcadeDrive(-joystick.getY(), joystick.getX()), driveSubsystem));
 
         new JoystickButton(joystick, Constants.raiseArmBttn)
@@ -46,11 +49,11 @@ public class RobotContainer {
             .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
   
         new JoystickButton(joystick, Constants.retractArmBttn)
-             .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(-1)))
-             .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
+            .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(-1)))
+            .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
   
         new JoystickButton(joystick, Constants.OpenClawBttn)
-              .whileTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
+            .whileTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
 
         new JoystickButton(joystick, Constants.HomeBttn)
             .onTrue(new HomeCommand(armSubsystem));
@@ -67,7 +70,8 @@ public class RobotContainer {
         new JoystickButton(joystick, Constants.GridMidBttn)
             .onTrue(new ArmPresetCommand(armSubsystem, 49,32));
         
-
+        new JoystickButton(joystick, Constants.BalanceBttn)
+            .whileTrue(new BalanceCommand(driveSubsystem));
     }
   
     public Command getAutonomousCommand() {

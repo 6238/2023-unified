@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -69,7 +70,7 @@ public class DriveSubsystem extends SubsystemBase {
         talonRightFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
 
 		resetEncoders();
-		ahrs.zeroYaw();
+		zeroGyroAngle();
 
 		SmartDashboard.putBoolean("Brakes", true);
 		setBraking(true);
@@ -80,8 +81,6 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		m_odometry.update(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()));
-		
-		// For Testing Purposes
 		SmartDashboard.putNumber("X Position", Math.floor(getPose().getX()*1000)/1000);
         SmartDashboard.putNumber("Y Position", Math.floor(getPose().getY()*1000)/1000);
         SmartDashboard.putNumber("Angle Position", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
@@ -89,7 +88,6 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
         SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
 		SmartDashboard.putNumber("Pitch Angle", ahrs.getPitch());
-		// For Testing Purposes
 
 		boolean braking = SmartDashboard.getBoolean("Brakes", true);
 		setBraking(braking);
@@ -107,19 +105,38 @@ public class DriveSubsystem extends SubsystemBase {
         return positionMeters * 2.5106;
     }
 
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorVelocity()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorVelocity()));
+	}
+
+	public double getPosition() {
+		double position = nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorPosition() / 2 + talonRightLeader.getSelectedSensorPosition() / 2);
+        return position;
+	}
+
 	public Pose2d getPose() {
 		return m_odometry.getPoseMeters();
 	}
 
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
-		talonLeftLeader.setVoltage(-leftVolts);
-		talonRightLeader.setVoltage(-rightVolts);
+		SmartDashboard.putNumber("Right Volts - Left Volts", rightVolts - leftVolts);
+		SmartDashboard.putNumber("Right Volts", rightVolts);
+		SmartDashboard.putNumber("Left Volts",leftVolts);
+		talonLeftLeader.setVoltage(leftVolts);
+		talonRightLeader.setVoltage(rightVolts);
 		robotDrive.feed();
 	}
 
+	public double getHeading() {
+		return ahrs.getRotation2d().getDegrees();
+	}
+
+	public double getAngle() {
+        return Math.IEEEremainder(ahrs.getAngle(), 360);
+    }
+
 	public void resetOdometry(Pose2d pose) {
 		resetEncoders();
-		ahrs.zeroYaw();
 		m_odometry.resetPosition(
 			ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()), pose);
 	}	
@@ -133,11 +150,12 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void resetEncoders() {
-		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition(); // J.T. 2023-03-04 not sure that these should be "+=" instead of "="
-		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition(); // J.t. 2023-03-04 not sure that these should be "+=" instead of "="
+		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition();
+		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition();
 	}
 
 	public double getPitch() {
+		System.out.println("Pitch : " + ahrs.getPitch());
 		return ahrs.getPitch();
 	}
 
@@ -159,8 +177,7 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 	}
 
-	public Pose2d getPoseToObject() {
-		Pose2d pose = m_odometry.getPoseMeters();
-		return new Pose2d(pose.getX(), pose.getY(), pose.getRotation());
-	}
+	public void zeroGyroAngle() {
+        ahrs.zeroYaw();
+    }
 }

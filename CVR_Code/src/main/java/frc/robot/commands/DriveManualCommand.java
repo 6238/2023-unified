@@ -21,6 +21,7 @@ public class DriveManualCommand extends CommandBase {
     public DriveManualCommand(DriveSubsystem driveSubsystem, Joystick joystick) {
         this.joystick = joystick;
         this.driveSubsystem = driveSubsystem;
+        addRequirements(driveSubsystem);
     }
 
     @Override
