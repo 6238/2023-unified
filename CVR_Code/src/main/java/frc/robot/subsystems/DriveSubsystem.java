@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
+import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
@@ -42,6 +44,14 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public DriveSubsystem() {
 		PID_ID = 0;
+
+		talonLeftLeader.configAllSettings(new TalonFXConfiguration());
+		talonLeftFollowerOne.configAllSettings(new TalonFXConfiguration());
+		talonLeftFollowerTwo.configAllSettings(new TalonFXConfiguration());
+		talonRightLeader.configAllSettings(new TalonFXConfiguration());
+		talonRightFollowerOne.configAllSettings(new TalonFXConfiguration());
+		talonRightFollowerTwo.configAllSettings(new TalonFXConfiguration());
+
         talonLeftFollowerOne.follow(talonLeftLeader);
         talonLeftFollowerTwo.follow(talonLeftLeader);
 
@@ -58,16 +68,6 @@ public class DriveSubsystem extends SubsystemBase {
         talonRightLeader.setNeutralMode(NeutralMode.Brake);
         talonRightFollowerOne.setNeutralMode(NeutralMode.Brake);
         talonRightFollowerTwo.setNeutralMode(NeutralMode.Brake);
-
-        talonLeftLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
-        talonRightLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
-
-        talonLeftLeader.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonLeftFollowerOne.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonLeftFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonRightLeader.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonRightFollowerOne.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonRightFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
 
 		resetEncoders();
 		zeroGyroAngle();
@@ -87,10 +87,7 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("X Position Graph", Math.floor(getPose().getX()*1000)/1000);
 		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
         SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
-		SmartDashboard.putNumber("Pitch Angle", ahrs.getPitch());
-
-		boolean braking = SmartDashboard.getBoolean("Brakes", true);
-		setBraking(braking);
+		SmartDashboard.putNumber("Pitch Angle", getPitch());
 	}
 
 	public void arcadeDrive(double fwd, double rot) {
@@ -155,11 +152,10 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public double getPitch() {
-		System.out.println("Pitch : " + ahrs.getPitch());
-		return ahrs.getPitch();
+		return ahrs.getRoll();
 	}
 
-	private void setBraking(boolean braking) {
+	public void setBraking(boolean braking) {
 		if(braking) {
 			talonLeftLeader.setNeutralMode(NeutralMode.Brake);
 			talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
@@ -180,4 +176,8 @@ public class DriveSubsystem extends SubsystemBase {
 	public void zeroGyroAngle() {
         ahrs.zeroYaw();
     }
+
+	public void calibrate() {
+		ahrs.calibrate();
+	}
 }

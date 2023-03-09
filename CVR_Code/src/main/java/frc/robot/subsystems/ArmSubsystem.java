@@ -74,6 +74,10 @@ public class ArmSubsystem extends SubsystemBase{
         solenoid.set(isSolenoidOn);
     }
 
+    public void setClaw(boolean open) {
+        solenoid.set(open);
+    }
+
     public double getPulleyPosition(){
         return -pulleyEncoder.getPosition()+m_pulleyPositionHome;
     }

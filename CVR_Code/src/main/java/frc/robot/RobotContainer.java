@@ -5,15 +5,24 @@
 package frc.robot;
 
 import frc.robot.commands.HomeCommand;
+import frc.robot.commands.TrajectoryCommand;
+import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
 import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.DriveManualCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
+import java.util.LinkedList;
+import java.util.List;
+
+import edu.wpi.first.math.Pair;
+import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 /**
@@ -29,6 +38,7 @@ public class RobotContainer {
 
     public RobotContainer() {
         configureBindings();
+        driveSubsystem.calibrate();
     }
 
     private void configureBindings() {
@@ -75,6 +85,18 @@ public class RobotContainer {
     }
   
     public Command getAutonomousCommand() {
-        return null;
+        LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
+        LinkedList<Pair<Double,Double>> point2 = new LinkedList<Pair<Double,Double>>();
+        point1.add(new Pair<Double,Double>(2.2,0.0));
+
+        return new SequentialCommandGroup(new HomeCommand(armSubsystem),
+            new ArmPresetCommand(armSubsystem, 49, 32),
+            Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
+            new HomeCommand(armSubsystem),
+            new TrajectoryCommand(driveSubsystem, point1, 0));
+    }
+
+    public void setBraking(boolean braking) {
+        driveSubsystem.setBraking(braking);
     }
 }

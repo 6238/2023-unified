@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class BalanceCommand extends CommandBase {
-    private final double angleErrorTolerance = 2;
+    private final double angleErrorTolerance = 1;
     private final double maxDegreePerSecond = 1;
 
-    private final double minVoltage = 0.35;
-    private final double maxVoltage = 0.6;
+    private final double minVoltage = 0.3;
+    private final double maxVoltage = 0.5;
     // 0 < minVoltage < maxVoltage < 1.0
 
     private final DriveSubsystem driveSubsystem;  
@@ -41,10 +41,9 @@ public class BalanceCommand extends CommandBase {
         } else {
             fwd = -(Math.sin(pitch*Math.PI/180)) * (maxVoltage - minVoltage - timeScale) + minVoltage;
         }
-        System.out.println(fwd);
         //System.out.println("Original: " + -(Math.sin(pitch)) * (maxVoltage - minVoltage) + ", Scaled: " + fwd);
         // maps [0, maxPitch] to [minVoltage, maxVoltage]
-        driveSubsystem.arcadeDrive(fwd, 0);
+        driveSubsystem.arcadeDrive(-fwd, 0);
     }
 
     @Override

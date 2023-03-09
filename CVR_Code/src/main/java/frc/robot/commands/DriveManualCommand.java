@@ -59,13 +59,13 @@ public class DriveManualCommand extends CommandBase {
 
         if (rotateSpeed > ignoreThreshold) {
             rotateSpeed = scale(rotateSpeed, ignoreThreshold, 1.0, minVoltage, maxVoltage);
-        } else if (forwardSpeed < -ignoreThreshold) {
+        } else if (rotateSpeed < -ignoreThreshold) {
             rotateSpeed = scale(rotateSpeed, -1.0, -ignoreThreshold, -maxVoltage, -minVoltage);
         } else {
             rotateSpeed = 0;
         }
 
-        driveSubsystem.arcadeDrive(forwardSpeed, rotateSpeed);
+        driveSubsystem.arcadeDrive(-forwardSpeed, rotateSpeed);
         prevSpeedTime = System.currentTimeMillis();
         prevSpeed = forwardSpeed;
     }
