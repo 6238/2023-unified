@@ -52,6 +52,13 @@ public class DriveSubsystem extends SubsystemBase {
 		talonRightFollowerOne.configAllSettings(new TalonFXConfiguration());
 		talonRightFollowerTwo.configAllSettings(new TalonFXConfiguration());
 
+		talonLeftLeader.configOpenloopRamp(Constants.rampRate);
+		talonLeftFollowerOne.configOpenloopRamp(Constants.rampRate);
+		talonLeftFollowerTwo.configOpenloopRamp(Constants.rampRate);
+		talonRightLeader.configOpenloopRamp(Constants.rampRate);
+		talonRightFollowerOne.configOpenloopRamp(Constants.rampRate);
+		talonRightFollowerTwo.configOpenloopRamp(Constants.rampRate);
+
         talonLeftFollowerOne.follow(talonLeftLeader);
         talonLeftFollowerTwo.follow(talonLeftLeader);
 

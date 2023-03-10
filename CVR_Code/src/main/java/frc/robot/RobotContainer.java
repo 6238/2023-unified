@@ -5,10 +5,13 @@
 package frc.robot;
 
 import frc.robot.commands.HomeCommand;
+import frc.robot.commands.ToggleClawCommand;
 import frc.robot.commands.TrajectoryCommand;
 import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
 import frc.robot.commands.BalanceCommand;
+import frc.robot.commands.DistanceCommand;
+import frc.robot.commands.DriveCommand;
 import frc.robot.commands.DriveManualCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
@@ -43,28 +46,22 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        driveSubsystem.setDefaultCommand(
-            //new DriveManualCommand(driveSubsystem, joystick));
-            Commands.run(() -> driveSubsystem.arcadeDrive(-joystick.getY(), joystick.getX()), driveSubsystem));
+        driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, joystick));
 
         new JoystickButton(joystick, Constants.raiseArmBttn)
-            .whileTrue(Commands.run(() -> armSubsystem.raiseArm(1)))
-            .onFalse(Commands.run(() -> armSubsystem.resetPulley()));
+            .whileTrue(new ArmManualCommand(armSubsystem, joystick));
   
         new JoystickButton(joystick, Constants.lowerArmBttn)
-            .whileTrue(Commands.run(() -> armSubsystem.raiseArm(-1)))
-            .onFalse(Commands.run(() -> armSubsystem.resetPulley()));
+            .whileTrue(new ArmManualCommand(armSubsystem, joystick));
   
         new JoystickButton(joystick, Constants.extendArmBttn)
-            .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(1)))
-            .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
+            .whileTrue(new ArmManualCommand(armSubsystem, joystick));
   
         new JoystickButton(joystick, Constants.retractArmBttn)
-            .whileTrue(Commands.run(() -> armSubsystem.extendTelescope(-1)))
-            .onFalse(Commands.run(() -> armSubsystem.resetTelescope()));
+            .whileTrue(new ArmManualCommand(armSubsystem, joystick));
   
         new JoystickButton(joystick, Constants.OpenClawBttn)
-            .whileTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
+            .onTrue(new ToggleClawCommand(armSubsystem));
 
         new JoystickButton(joystick, Constants.HomeBttn)
             .onTrue(new HomeCommand(armSubsystem));
@@ -90,21 +87,34 @@ public class RobotContainer {
         switch(mode) {
             case 0:
                 return autonomousOne();
+            case 1:
+                return autonomousTwo();
             default:
                 return autonomousOne();
         }
     }
 
     private Command autonomousOne() {
-        LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
-        LinkedList<Pair<Double,Double>> point2 = new LinkedList<Pair<Double,Double>>();
-        point1.add(new Pair<Double,Double>(2.2,0.0));
+        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
+        // point1.add(new Pair<Double,Double>(-2.2,0.0));
 
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
             new ArmPresetCommand(armSubsystem, 49, 32),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             new HomeCommand(armSubsystem),
-            new TrajectoryCommand(driveSubsystem, point1, 0));
+            new DistanceCommand(driveSubsystem, -2.2));
+            // new TrajectoryCommand(driveSubsystem, point1, 0));
+    }
+
+    private Command autonomousTwo() {
+        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
+        // point1.add(new Pair<Double,Double>(-3.5,0.0));
+
+        return new SequentialCommandGroup(new HomeCommand(armSubsystem),
+            new ArmPresetCommand(armSubsystem, 49, 32),
+            Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
+            new DistanceCommand(driveSubsystem, -3.5));
+            //new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
     public void setBraking(boolean braking) {
