@@ -57,8 +57,11 @@ public class ArmManualCommand extends CommandBase {
     private Pair<Double,Double> up(int y) {
         double e = (armSubsystem.getTelescopePosition()-77)*Constants.telescopeMetersPerCount + Constants.armLengthAtGrab;
         double theta = -(armSubsystem.getPulleyPosition()-81)*Constants.armThetaPerCount + Constants.thetaAtGrab;
-        double extension = Math.sqrt(e + 2*e*Math.sin(theta)*y + y*y) - e;
-        double raise = 180 * Math.atan((Math.sin(theta) + y/e)/Math.cos(theta)) / Math.PI;
+        double extension = Math.sqrt(e + 2*e*Math.sin(theta)*y + y*y) - e; // Meters
+        double raise = 180 * Math.atan((Math.sin(theta) + y/e)/Math.cos(theta)) / Math.PI; // Degrees
+
+        extension = extension * 10 / Constants.telescopeMetersPerCount;
+        raise = raise * 3 / Constants.armThetaPerCount;
 
         return new Pair<Double,Double>(raise, extension);
     }
@@ -67,8 +70,11 @@ public class ArmManualCommand extends CommandBase {
     private Pair<Double,Double> forward(int x) {
         double e = (armSubsystem.getTelescopePosition()-77)*Constants.telescopeMetersPerCount + Constants.armLengthAtGrab;
         double theta = -(armSubsystem.getPulleyPosition()-81)*Constants.armThetaPerCount + Constants.thetaAtGrab;
-        double extension = Math.sqrt(e + 2*e*Math.cos(theta)*x + x*x) - e;
-        double raise = 180 * Math.atan(Math.sin(theta)/(Math.cos(theta) + x/e)) / Math.PI;
+        double extension = Math.sqrt(e + 2*e*Math.cos(theta)*x + x*x) - e; // Meters
+        double raise = 180 * Math.atan(Math.sin(theta)/(Math.cos(theta) + x/e)) / Math.PI; // Degrees
+
+        extension = extension * 10 / Constants.telescopeMetersPerCount;
+        raise = raise * 3 / Constants.armThetaPerCount;
 
         return new Pair<Double,Double>(raise, extension);
     }
