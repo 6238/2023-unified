@@ -24,6 +24,8 @@ public class DriveCommand extends CommandBase{
 
         // x = Math.abs(x) * x;
         if(x > 0) x = (x - 0.15) * 0.7 + 0.3;
+        if(y > 0) y = (y - 0.15) * 0.7 + 0.3;
+
         driveSubsystem.arcadeDrive(x, y);
     }
 }
