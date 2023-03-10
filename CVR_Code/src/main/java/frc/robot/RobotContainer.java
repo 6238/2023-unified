@@ -22,6 +22,10 @@ import java.util.List;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -39,8 +43,15 @@ public class RobotContainer {
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final Joystick joystick = new Joystick(0);
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
+    private SimpleWidget autoSelector;
 
     public RobotContainer() {
+        SendableChooser<Integer> autoModeSelection = new SendableChooser<Integer>();
+        autoModeSelection.addOption("Balance", 0);
+        autoModeSelection.addOption("No Balance", 1);
+        autoSelector = Shuffleboard.getTab("Control")
+            .add("Auto Mode", 0)
+            .withWidget(BuiltInWidgets.kSplitButtonChooser);
         configureBindings();
         driveSubsystem.calibrate();
     }
@@ -83,7 +94,7 @@ public class RobotContainer {
     }
   
     public Command getAutonomousCommand() {
-        int mode = (int) SmartDashboard.getNumber("Autonomous Mode", 0);
+        int mode = (int) autoSelector.getEntry().getInteger(0);
         switch(mode) {
             case 0:
                 return autonomousOne();
