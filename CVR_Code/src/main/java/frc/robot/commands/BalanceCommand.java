@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class BalanceCommand extends CommandBase {
-    private final double angleErrorTolerance = 1;
+    private final double angleErrorTolerance = 2;
     private final double maxDegreePerSecond = 1;
 
     private final double minVoltage = 0.3;

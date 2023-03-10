@@ -19,6 +19,7 @@ import java.util.List;
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -85,6 +86,16 @@ public class RobotContainer {
     }
   
     public Command getAutonomousCommand() {
+        int mode = (int) SmartDashboard.getNumber("Autonomous Mode", 0);
+        switch(mode) {
+            case 0:
+                return autonomousOne();
+            default:
+                return autonomousOne();
+        }
+    }
+
+    private Command autonomousOne() {
         LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
         LinkedList<Pair<Double,Double>> point2 = new LinkedList<Pair<Double,Double>>();
         point1.add(new Pair<Double,Double>(2.2,0.0));

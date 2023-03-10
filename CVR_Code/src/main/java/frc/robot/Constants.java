@@ -56,10 +56,10 @@ public class Constants {
     public final static int extendArmBttn = 9;
     public final static int retractArmBttn = 11;
     public static final int OpenClawBttn = 1;
-    public final static int HomeBttn = 5;
-    public final static int ShelfBttn = 6;
+    public final static int HomeBttn = 8;
+    public final static int ShelfBttn = 5;
     public final static int GridHighBttn = 3;
     public final static int GridMidBttn = 4;
-    public final static int GridLowBttn = 7;
+    public final static int GridLowBttn = 6;
     public final static int BalanceBttn = 2;
 }
