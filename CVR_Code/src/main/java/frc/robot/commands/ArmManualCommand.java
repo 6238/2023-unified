@@ -60,8 +60,8 @@ public class ArmManualCommand extends CommandBase {
         double extension = Math.sqrt(e + 2*e*Math.sin(theta)*y + y*y) - e; // Meters
         double raise = 180 * Math.atan((Math.sin(theta) + y/e)/Math.cos(theta)) / Math.PI; // Degrees
 
-        extension = extension * 10 / Constants.telescopeMetersPerCount;
-        raise = raise * 3 / Constants.armThetaPerCount;
+        extension = extension * Constants.telescopeGearRatio / Constants.telescopeMetersPerCount;
+        raise = raise * Constants.pulleyGearRatio / Constants.armThetaPerCount;
 
         return new Pair<Double,Double>(raise, extension);
     }
@@ -73,8 +73,8 @@ public class ArmManualCommand extends CommandBase {
         double extension = Math.sqrt(e + 2*e*Math.cos(theta)*x + x*x) - e; // Meters
         double raise = 180 * Math.atan(Math.sin(theta)/(Math.cos(theta) + x/e)) / Math.PI; // Degrees
 
-        extension = extension * 10 / Constants.telescopeMetersPerCount;
-        raise = raise * 3 / Constants.armThetaPerCount;
+        extension = extension * Constants.telescopeGearRatio / Constants.telescopeMetersPerCount;
+        raise = raise * Constants.pulleyGearRatio / Constants.armThetaPerCount;
 
         return new Pair<Double,Double>(raise, extension);
     }

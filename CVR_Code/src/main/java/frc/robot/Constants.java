@@ -26,6 +26,9 @@ public class Constants {
     public final static double coneHeight = 0.165 + 0.95; // meters to center of cone(assuming it is on the shelf)
     public final static double cubeHeight = 0.12 + 0.95; // meters to center of cube(assuming it is on the shelf)
     public final static double cameraPitch = 9 * Math.PI / 180; // radians
+
+    public final static int pulleyGearRatio = 10;
+    public final static int telescopeGearRatio = 3;
     
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;
