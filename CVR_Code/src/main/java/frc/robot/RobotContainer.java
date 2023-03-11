@@ -6,7 +6,7 @@ package frc.robot;
 
 import frc.robot.commands.HomeCommand;
 import frc.robot.commands.SlowDriveCommand;
-import frc.robot.commands.TimeCommand;
+import frc.robot.commands.DistanceCommand;
 import frc.robot.commands.ToggleClawCommand;
 import frc.robot.commands.TrajectoryCommand;
 import frc.robot.commands.ArmManualCommand;
@@ -120,7 +120,7 @@ public class RobotContainer {
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem),
-            new TimeCommand(driveSubsystem, 750, -1),
+            new DistanceCommand(driveSubsystem, -2.2),
             new BalanceCommand(driveSubsystem));
             // new TrajectoryCommand(driveSubsystem, point1, 0));
     }
@@ -135,7 +135,7 @@ public class RobotContainer {
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem),
-            new TimeCommand(driveSubsystem, 1500, -1));
+            new DistanceCommand(driveSubsystem, -3.5));
             //new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
