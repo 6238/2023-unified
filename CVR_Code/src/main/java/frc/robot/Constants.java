@@ -10,7 +10,7 @@ public class Constants {
     public final static int RIGHT_FOLLOWER_ID_ONE = 32;
     public final static int RIGHT_FOLLOWER_ID_TWO = 34;
 
-    public final static double rampRate = 0.1;
+    public final static double rampRate = 0.2;
 
     public final static double armThetaPerCount = 0.0;
     public final static double telescopeMetersPerCount = 0.0;
@@ -71,4 +71,5 @@ public class Constants {
     public final static int GridMidBttn = 4;
     public final static int GridLowBttn = 6;
     public final static int BalanceBttn = 2;
+    public final static int SlowBttn = 7;
 }

@@ -5,10 +5,10 @@ import frc.robot.subsystems.DriveSubsystem;
 
 public class BalanceCommand extends CommandBase {
     private final double angleErrorTolerance = 2;
-    private final double maxDegreePerSecond = 1;
+    private final double maxDegreePerSecond = 2;
 
-    private final double minVoltage = 0.3;
-    private final double maxVoltage = 0.5;
+    private final double minVoltage = 0.40;
+    private final double maxVoltage = 0.55;
     // 0 < minVoltage < maxVoltage < 1.0
 
     private final DriveSubsystem driveSubsystem;  
@@ -35,7 +35,8 @@ public class BalanceCommand extends CommandBase {
         double pitch = driveSubsystem.getPitch();
         double fwd;
         double timeScale = 0;
-        timeScale = (System.currentTimeMillis() - timeSinceStart)/10000;
+        timeScale = (System.currentTimeMillis() - timeSinceStart)/5000;
+        timeScale = timeScale*timeScale;
         if(pitch > 0) {
             fwd = -(Math.sin(pitch*Math.PI/180)) * (maxVoltage - minVoltage - timeScale) - minVoltage;
         } else {

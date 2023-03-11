@@ -5,14 +5,15 @@
 package frc.robot;
 
 import frc.robot.commands.HomeCommand;
+import frc.robot.commands.RampBalanceCommand;
+import frc.robot.commands.SlowDriveCommand;
+import frc.robot.commands.TimeCommand;
 import frc.robot.commands.ToggleClawCommand;
 import frc.robot.commands.TrajectoryCommand;
 import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
 import frc.robot.commands.BalanceCommand;
-import frc.robot.commands.DistanceCommand;
 import frc.robot.commands.DriveCommand;
-import frc.robot.commands.DriveManualCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -46,12 +47,12 @@ public class RobotContainer {
     private SimpleWidget autoSelector;
 
     public RobotContainer() {
-        SendableChooser<Integer> autoModeSelection = new SendableChooser<Integer>();
-        autoModeSelection.addOption("Balance", 0);
-        autoModeSelection.addOption("No Balance", 1);
-        autoSelector = Shuffleboard.getTab("Control")
-            .add("Auto Mode", 0)
-            .withWidget(BuiltInWidgets.kSplitButtonChooser);
+        // SendableChooser<Integer> autoModeSelection = new SendableChooser<Integer>();
+        // autoModeSelection.addOption("Balance", 0);
+        // autoModeSelection.addOption("No Balance", 1);
+        // autoSelector = Shuffleboard.getTab("Control")
+        //     .add("Auto Mode", 0)
+        //     .withWidget(BuiltInWidgets.kSplitButtonChooser);
         configureBindings();
         driveSubsystem.calibrate();
     }
@@ -72,34 +73,39 @@ public class RobotContainer {
             .whileTrue(new ArmManualCommand(armSubsystem, joystick));
   
         new JoystickButton(joystick, Constants.OpenClawBttn)
-            .onTrue(new ToggleClawCommand(armSubsystem));
+            .onTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
 
         new JoystickButton(joystick, Constants.HomeBttn)
             .onTrue(new HomeCommand(armSubsystem));
 
         new JoystickButton(joystick, Constants.ShelfBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 81,77));
+            .onTrue(new ArmPresetCommand(armSubsystem, 73.8, 36.8));
         
             new JoystickButton(joystick, Constants.GridHighBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 60,97));
+            .onTrue(new ArmPresetCommand(armSubsystem, 72.5, 97.7));
 
         new JoystickButton(joystick, Constants.GridLowBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 130,0));
+            .onTrue(new ArmPresetCommand(armSubsystem, 130, 0));
 
         new JoystickButton(joystick, Constants.GridMidBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 49,32));
+            .onTrue(new ArmPresetCommand(armSubsystem, 64.3, 18.7));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
-            .whileTrue(new BalanceCommand(driveSubsystem));
+            .whileTrue(new RampBalanceCommand(driveSubsystem));
+
+        new JoystickButton(joystick, Constants.SlowBttn)
+            .whileTrue(new SlowDriveCommand(driveSubsystem, joystick));
     }
   
     public Command getAutonomousCommand() {
-        int mode = (int) autoSelector.getEntry().getInteger(0);
+        int mode = (int)SmartDashboard.getNumber("Auto Mode", 2); //autoSelector.getEntry().getInteger(0);
         switch(mode) {
             case 0:
                 return autonomousOne();
             case 1:
                 return autonomousTwo();
+            case 2:
+                return autonomousThree();
             default:
                 return autonomousOne();
         }
@@ -110,10 +116,13 @@ public class RobotContainer {
         // point1.add(new Pair<Double,Double>(-2.2,0.0));
 
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            new ArmPresetCommand(armSubsystem, 49, 32),
+            new ArmPresetCommand(armSubsystem, 66, 36.5),
+            Commands.waitSeconds(0.1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
+            Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem),
-            new DistanceCommand(driveSubsystem, -2.2));
+            new TimeCommand(driveSubsystem, 750, -1),
+            new RampBalanceCommand(driveSubsystem));
             // new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
@@ -122,13 +131,34 @@ public class RobotContainer {
         // point1.add(new Pair<Double,Double>(-3.5,0.0));
 
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            new ArmPresetCommand(armSubsystem, 49, 32),
+            new ArmPresetCommand(armSubsystem, 66, 36.5),
+            Commands.waitSeconds(0.1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
-            new DistanceCommand(driveSubsystem, -3.5));
+            Commands.waitSeconds(0.5),
+            new HomeCommand(armSubsystem),
+            new TimeCommand(driveSubsystem, 1500, -1));
+            //new TrajectoryCommand(driveSubsystem, point1, 0));
+    }
+
+    private Command autonomousThree() {
+        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
+        // point1.add(new Pair<Double,Double>(-3.5,0.0));
+
+        return new SequentialCommandGroup(new HomeCommand(armSubsystem),
+            new ArmPresetCommand(armSubsystem, 66, 36.5),
+            Commands.waitSeconds(0.1),
+            Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
+            Commands.waitSeconds(0.5),
+            new HomeCommand(armSubsystem));
             //new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
     public void setBraking(boolean braking) {
         driveSubsystem.setBraking(braking);
+    }
+
+    public void reset() {
+        armSubsystem.setClaw(false);
+        new HomeCommand(armSubsystem).schedule();
     }
 }

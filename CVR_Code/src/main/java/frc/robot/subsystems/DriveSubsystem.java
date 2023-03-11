@@ -23,8 +23,6 @@ import frc.robot.Constants;
 import frc.robot.SmartDashboardParam;
 
 public class DriveSubsystem extends SubsystemBase {
-	private final SmartDashboardParam currentLimit = new SmartDashboardParam("currentLimiter", 16); // 0.18
-
 	private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
     private final WPI_TalonFX talonLeftFollowerOne = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_ONE);
     private final WPI_TalonFX talonLeftFollowerTwo = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_TWO);
@@ -40,11 +38,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final DifferentialDriveOdometry m_odometry;
 
-	private final int PID_ID;
-
 	public DriveSubsystem() {
-		PID_ID = 0;
-
 		talonLeftLeader.configAllSettings(new TalonFXConfiguration());
 		talonLeftFollowerOne.configAllSettings(new TalonFXConfiguration());
 		talonLeftFollowerTwo.configAllSettings(new TalonFXConfiguration());

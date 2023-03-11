@@ -32,7 +32,8 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    SmartDashboard.putBoolean("Brakes", true);    
+    SmartDashboard.putBoolean("Brakes", true);
+    SmartDashboard.putNumber("Auto Mode", 0);    
   }
 
   /**
@@ -84,6 +85,7 @@ public class Robot extends TimedRobot {
     // continue until interrupted by another command, remove
     // this line or comment it out.
     m_robotContainer.setBraking(true);
+    m_robotContainer.reset();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
