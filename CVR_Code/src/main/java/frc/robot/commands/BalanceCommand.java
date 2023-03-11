@@ -2,19 +2,20 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.subsystems.DriveSubsystem;
+import pabeles.concurrency.IntOperatorTask.Min;
 
 public class BalanceCommand extends CommandBase {
     private final double angleErrorTolerance = 2;
     private final double maxDegreePerSecond = 2;
+    private final double maxPitch = 20.0;
 
-    private final double minVoltage = 0.40;
-    private final double maxVoltage = 0.55;
+    private final double minVoltage = 0.25;
+    private final double maxVoltage = 0.5;
     // 0 < minVoltage < maxVoltage < 1.0
 
     private final DriveSubsystem driveSubsystem;  
     private double prevPitch;
     private long timeAtPrevPitch;
-    private long timeSinceStart;
     // private boolean driving = true;
     // private long timeAtSwitch;
 
@@ -27,24 +28,26 @@ public class BalanceCommand extends CommandBase {
     public void initialize() {
         prevPitch = driveSubsystem.getPitch();
         timeAtPrevPitch = System.currentTimeMillis();
-        timeSinceStart = System.currentTimeMillis();
     }
 
     @Override
     public void execute() {
         double pitch = driveSubsystem.getPitch();
         double fwd;
-        double timeScale = 0;
-        timeScale = (System.currentTimeMillis() - timeSinceStart)/5000;
-        timeScale = timeScale*timeScale;
-        if(pitch > 0) {
-            fwd = -(Math.sin(pitch*Math.PI/180)) * (maxVoltage - minVoltage - timeScale) - minVoltage;
-        } else {
-            fwd = -(Math.sin(pitch*Math.PI/180)) * (maxVoltage - minVoltage - timeScale) + minVoltage;
+        long time = System.currentTimeMillis();
+        if(1000*Math.abs(pitch - prevPitch) / (time - timeAtPrevPitch) > maxDegreePerSecond) {
+            return;
         }
-        //System.out.println("Original: " + -(Math.sin(pitch)) * (maxVoltage - minVoltage) + ", Scaled: " + fwd);
-        // maps [0, maxPitch] to [minVoltage, maxVoltage]
-        driveSubsystem.arcadeDrive(-fwd, 0);
+        prevPitch = pitch;
+        timeAtPrevPitch = time;
+
+        if(pitch > 0) {
+            fwd = -Math.pow(pitch / maxPitch, 1.5) * (maxVoltage - minVoltage) - minVoltage;
+        } else {
+            fwd = Math.pow(-pitch / maxPitch, 1.5) * (maxVoltage - minVoltage) + minVoltage;
+        }
+
+        driveSubsystem.arcadeDrive(fwd, 0);
     }
 
     @Override

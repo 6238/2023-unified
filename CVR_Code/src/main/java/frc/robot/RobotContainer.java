@@ -5,7 +5,6 @@
 package frc.robot;
 
 import frc.robot.commands.HomeCommand;
-import frc.robot.commands.RampBalanceCommand;
 import frc.robot.commands.SlowDriveCommand;
 import frc.robot.commands.TimeCommand;
 import frc.robot.commands.ToggleClawCommand;
@@ -91,7 +90,7 @@ public class RobotContainer {
             .onTrue(new ArmPresetCommand(armSubsystem, 64.3, 18.7));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
-            .whileTrue(new RampBalanceCommand(driveSubsystem));
+            .whileTrue(new BalanceCommand(driveSubsystem));
 
         new JoystickButton(joystick, Constants.SlowBttn)
             .whileTrue(new SlowDriveCommand(driveSubsystem, joystick));
@@ -122,7 +121,7 @@ public class RobotContainer {
             Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem),
             new TimeCommand(driveSubsystem, 750, -1),
-            new RampBalanceCommand(driveSubsystem));
+            new BalanceCommand(driveSubsystem));
             // new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
