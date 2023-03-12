@@ -6,9 +6,6 @@ package frc.robot;
 
 import frc.robot.commands.HomeCommand;
 import frc.robot.commands.SlowDriveCommand;
-import frc.robot.commands.DistanceCommand;
-import frc.robot.commands.ToggleClawCommand;
-import frc.robot.commands.TrajectoryCommand;
 import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
 import frc.robot.commands.BalanceCommand;
@@ -16,19 +13,10 @@ import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import edu.wpi.first.math.Pair;
-import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -113,16 +101,18 @@ public class RobotContainer {
     private Command autonomousOne() {
         // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
         // point1.add(new Pair<Double,Double>(-2.2,0.0));
-
+        return autonomousTwo();
+        /*
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
             new ArmPresetCommand(armSubsystem, 66, 36.5),
             Commands.waitSeconds(0.1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem),
-            new DistanceCommand(driveSubsystem, -2.2),
+            driveSubsystem.getTimedDrive(1500, -0.65),
             new BalanceCommand(driveSubsystem));
             // new TrajectoryCommand(driveSubsystem, point1, 0));
+        */
     }
 
     private Command autonomousTwo() {
@@ -135,7 +125,7 @@ public class RobotContainer {
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem),
-            new DistanceCommand(driveSubsystem, -3.5));
+            driveSubsystem.getTimedDrive(3000, -0.5));
             //new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
