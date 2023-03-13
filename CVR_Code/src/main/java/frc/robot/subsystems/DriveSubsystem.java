@@ -192,7 +192,7 @@ public class DriveSubsystem extends SubsystemBase {
         };
         
         Timer timer = new Timer(timeMS);
-        return run(() -> arcadeDrive(power, 0))
+        return run(() -> arcadeDrive(-power, 0))
             .until(timer::isFinished).andThen(runOnce(()-> arcadeDrive(0, 0)));
     }
 }

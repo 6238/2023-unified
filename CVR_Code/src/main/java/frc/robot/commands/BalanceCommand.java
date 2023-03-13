@@ -36,6 +36,7 @@ public class BalanceCommand extends CommandBase {
         double fwd;
         long time = System.currentTimeMillis();
         if(1000*Math.abs(pitch - prevPitch) / (time - timeAtPrevPitch) > maxDegreePerSecond) {
+            driveSubsystem.arcadeDrive(0, 0);
             return;
         } 
         prevPitch = pitch;

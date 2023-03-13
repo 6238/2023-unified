@@ -66,16 +66,18 @@ public class RobotContainer {
             .onTrue(new HomeCommand(armSubsystem));
 
         new JoystickButton(joystick, Constants.ShelfBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 73.8, 36.8));
+            .onTrue(new ArmPresetCommand(armSubsystem, 67.7, 35.6));
         
+        // Old : Pulley (70.7), Telescope (98.2)
             new JoystickButton(joystick, Constants.GridHighBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 72.5, 97.7));
+            .onTrue(new ArmPresetCommand(armSubsystem, 67.5, 97.6));
 
         new JoystickButton(joystick, Constants.GridLowBttn)
             .onTrue(new ArmPresetCommand(armSubsystem, 130, 0));
 
+        // Old : Pulley (64.3), Telescope (18.7)
         new JoystickButton(joystick, Constants.GridMidBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 64.3, 18.7));
+            .onTrue(new ArmPresetCommand(armSubsystem, 64.4, 29.2));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
             .whileTrue(new BalanceCommand(driveSubsystem));
@@ -118,14 +120,14 @@ public class RobotContainer {
     private Command autonomousTwo() {
         // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
         // point1.add(new Pair<Double,Double>(-3.5,0.0));
-
-        return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            new ArmPresetCommand(armSubsystem, 66, 36.5),
-            Commands.waitSeconds(0.1),
-            Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
-            Commands.waitSeconds(0.5),
-            new HomeCommand(armSubsystem),
-            driveSubsystem.getTimedDrive(3000, -0.5));
+        return autonomousThree();
+        // return new SequentialCommandGroup(new HomeCommand(armSubsystem),
+        //     // new ArmPresetCommand(armSubsystem, 66, 36.5),
+        //     // Commands.waitSeconds(0.1),
+        //     // Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
+        //     // Commands.waitSeconds(0.5),
+        //     // new HomeCommand(armSubsystem),
+        //     driveSubsystem.getTimedDrive(3000, -0.55));
             //new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
@@ -134,7 +136,7 @@ public class RobotContainer {
         // point1.add(new Pair<Double,Double>(-3.5,0.0));
 
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            new ArmPresetCommand(armSubsystem, 66, 36.5),
+            new ArmPresetCommand(armSubsystem, 64.4, 29.2),
             Commands.waitSeconds(0.1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(0.5),
