@@ -8,6 +8,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
 import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
@@ -21,6 +24,7 @@ import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.MathUtil;
 import frc.robot.SmartDashboardParam;
 
 public class DriveSubsystem extends SubsystemBase {
@@ -183,6 +187,20 @@ public class DriveSubsystem extends SubsystemBase {
 		ahrs.calibrate();
 	}
 
+
+	public Command getBalanceCommand(double minVoltage, double maxVoltage, double delayThresholdDegPerS) {
+		final double maxPitch = 20.0;
+		MathUtil.SpeedGetter getter = new MathUtil.SpeedGetter(getPitch());
+
+		Supplier<Double> fwd = () -> {
+			return getter.get(getPitch()) > delayThresholdDegPerS ? 0 :
+				(getPitch() < 0 ?
+					MathUtil.scale(-getPitch(), 0, maxPitch, minVoltage, maxVoltage, 1.5) :
+						MathUtil.scale(getPitch(), -maxPitch, 0, -maxVoltage, -minVoltage, 1.5));
+		};
+
+		return run(() ->arcadeDrive(fwd.get(), 0));
+	}
 
     public Command getTimedDrive(long timeMS, double power) {
         final class Timer {
