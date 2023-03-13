@@ -10,4 +10,14 @@ public class ClawSubsystem extends SubsystemBase{
     public ClawSubsystem() {
         solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, 0);
     }
+
+    public void extendSolenoid() {
+        System.out.println("Running Extend Solenoid.");
+        solenoid.set(true);
+    }
+
+    public void retractSolenoid() {
+        System.out.println("Running Retract Solenoid.");
+        solenoid.set(false);
+    }
 }

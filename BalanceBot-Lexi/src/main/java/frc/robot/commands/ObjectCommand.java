@@ -1,19 +1,25 @@
-package frc.robot;
+package frc.robot.commands;
 
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonUtils;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.robot.Constants;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class ObjectCommand extends CommandBase {
-    private final double positionTolerance = 1;
-    private final double angleTolerance = 5;
+    private final double positionTolerance = 0.4;
+    private final double angleTolerance = 3;
 
-    private final double minVoltage = 0.35;
-    private final double maxVoltage = 0.6;
-    // 0 < minVoltage < maxVoltage < 1.0
+    private final double forwardCap = 5.0;
+    private final double minForward = 0.28;
+    private final double maxForward = 0.5;
+
+    private final double rotationCap = 1.0;
+    private final double minRotation = 0.2;
+    private final double maxRotation = 0.5;
 
     private final DriveSubsystem driveSubsystem; 
     private final PhotonCamera camera;
@@ -22,6 +28,7 @@ public class ObjectCommand extends CommandBase {
     private double yawDelta;
 
     private double objectHeight;
+    private int object;
 
     /*
      * Creates a new Object Command using the camera to detect the input object
@@ -32,6 +39,7 @@ public class ObjectCommand extends CommandBase {
     public ObjectCommand(DriveSubsystem driveSubsystem, PhotonCamera camera, int object) {
         this.driveSubsystem = driveSubsystem;
         this.camera = camera;
+        this.object = object;
         switch(object) {
             case 0:
                 objectHeight = Constants.coneHeight;
@@ -40,6 +48,10 @@ public class ObjectCommand extends CommandBase {
                 objectHeight = Constants.cubeHeight;
                 break;
         }
+    }
+
+    @Override
+    public void initialize() {
         camera.setDriverMode(false);
         camera.setPipelineIndex(object);
         addRequirements(driveSubsystem);
@@ -52,31 +64,39 @@ public class ObjectCommand extends CommandBase {
 
         // get distance to cone
         if(result.hasTargets()) {
+            System.out.println("We have targets");
             var target = result.getBestTarget();
 
             distance = PhotonUtils.calculateDistanceToTargetMeters(
                 Constants.cameraHeight, // height off ground
                 objectHeight, // height off ground
                 Constants.cameraPitch, // pitch relative to ground
-                Units.degreesToRadians(target.getPitch())) - 1; // to add a buffer for claw
-            
-            yawDelta = target.getYaw();
-            //double angleDelta = Math.asin(1.11*pixelDelta/Constants.CameraResolutionWidth);
-            if(distance >= 5) distance = 5;
-            double fwd;
-            fwd = distance/5 * (maxVoltage - minVoltage) + minVoltage;
+                Units.degreesToRadians(target.getPitch())); // to add a buffer for claw
+                     
+            double fwd = distance;
+            if(distance > forwardCap) {
+                fwd = maxForward;
+            } else {
+                fwd = minForward + distance * (maxForward - minForward) / forwardCap;
+            }
 
-            driveSubsystem.arcadeDrive(fwd, yawDelta);
+            yawDelta = target.getYaw();
+
+            double rot = yawDelta;
+            if(rot > rotationCap) {
+                rot = maxRotation;
+            } else {
+                rot = minRotation + rot * (maxRotation - minRotation) / rotationCap;
+            }
+
+            driveSubsystem.arcadeDrive(fwd, rot);
         }
     }
 
     @Override
     public boolean isFinished() {
+        System.out.println("Distance to target: " + distance);
+        System.out.println("Target Met: " + (distance <= positionTolerance && Math.abs(yawDelta) < angleTolerance));
         return (distance <= positionTolerance && Math.abs(yawDelta) < angleTolerance);
-    }
-
-    @Override
-    public void end(boolean interrupted) {
-        camera.setDriverMode(true);
     }
 }

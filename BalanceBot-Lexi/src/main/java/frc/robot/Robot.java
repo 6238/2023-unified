@@ -4,6 +4,10 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.util.Units;
@@ -29,8 +33,6 @@ public class Robot extends TimedRobot {
     // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
     // autonomous chooser on the dashboard.
     m_robotContainer = new RobotContainer();
-    SmartDashboard.putBoolean("Brakes", true);
-    m_robotContainer.setBraking(true);
   }
 
   /**
@@ -47,11 +49,6 @@ public class Robot extends TimedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    boolean braking = SmartDashboard.getBoolean("Brakes", true);
-    if(braking != m_robotContainer.isBraking()) {
-      m_robotContainer.setBraking(braking);
-      SmartDashboard.putBoolean("Brakes", braking);
-    }
   }
 
   /** This function is called once each time the robot enters Disabled mode. */
@@ -89,9 +86,7 @@ public class Robot extends TimedRobot {
 
   /** This function is called periodically during operator control. */
   @Override
-  public void teleopPeriodic() {
-
-  }
+  public void teleopPeriodic() {}
 
   @Override
   public void testInit() {
@@ -111,77 +106,3 @@ public class Robot extends TimedRobot {
   @Override
   public void simulationPeriodic() {}
 }
-
-
-
-  // @Override
-  // public void robotInit() {
-  //   // We need to invert one side of the drivetrain so that positive voltages
-  //   // result in both sides moving forward. Depending on how your robot's
-  //   // gearbox is constructed, you might have to invert the left side instead.
-  //   talonLeftFollowerOne.follow(talonLeftLeader);
-  //   talonLeftFollowerTwo.follow(talonLeftLeader);
-  //   talonRightFollowerOne.follow(talonRightLeader);
-  //   talonRightFollowerTwo.follow(talonRightLeader);
-  //   talonLeftLeader.setInverted(true);
-  //   talonLeftFollowerOne.setInverted(true);
-  //   talonLeftFollowerTwo.setInverted(true);
-  // }
-
-  // @Override
-  // public void teleopPeriodic() {
-  //   // Drive with arcade drive.
-  //   // That means that the Y axis drives forward
-  //   // and backward, and the X turns left and right.
-  //   double speed = stick.getY();
-  //   if (speed > .05){
-  //       speed = speed * .65 + .35;
-  //   } else if (speed < -.05) {
-  //       speed = speed * .65 - .35;
-  //   } else {
-  //       speed = 0;
-  //   }
-
-  //   robotDrive.arcadeDrive(-speed, stick.getX());
-  //   SmartDashboard.putNumber("DriveSpeed", -speed);
-  //   SmartDashboard.putNumber("DriveRotation", rotation);
-
-  //   SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-  //   SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-
-  //   SmartDashboard.putNumber("distanceDriven", getPosition());
-  // }
-
-  // @Override 
-  // public void autonomousInit() {
-  //   timer.reset();
-  //   timer.start();
-  // }
-
-
-  // //a little startup time needed (0.25?)
-  // //needs a little time to switch directions if going fast
-  // @Override
-  // public void autonomousPeriodic() {
-  //   double time = timer.get();
-
-  //   if(time < timeLimit/2) {
-  //     speed = 0.4;
-  //   } else if(time < timeLimit/2+0.1) {
-  //     speed = 0;
-  //   }else if(time < timeLimit) {
-  //     speed = -0.4;
-  //   } else {
-  //     speed = 0;
-  //   }
-  //   rotation = 0;
-
-  //   robotDrive.arcadeDrive(speed, rotation);
-  //   SmartDashboard.putNumber("DriveSpeed", -speed);
-  //   SmartDashboard.putNumber("DriveRotation", rotation);
-
-  //   SmartDashboard.putNumber("leftMotorsEncoderVelocity", talonLeftLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-  //   SmartDashboard.putNumber("rightMotorsEncoderVelocity", talonRightLeader.getSelectedSensorVelocity(PID_ID) * 0.1);
-
-  //   SmartDashboard.putNumber("distanceDriven", getPosition());
-  // }

@@ -12,10 +12,11 @@ public class Constants {
 
     public final static int CameraResolutionWidth = 180;
     public final static int CameraResolutionHeight = 320;
-    public final static double cameraHeight = 1.0; // meters
-    public final static double coneHeight = 0.165; // meters to center of cone(assuming it is on the floor)
-    public final static double cubeHeight = 0.12; // meters to center of cube(assuming it is on the floor)
-    public final static double cameraPitch = 0.0; // radians
+    public final static double cameraHeight = 0.57; // meters
+    public final static double coneHeight = 0.165 + 0.95; // meters to center of cone(assuming it is on the shelf)
+    public final static double cubeHeight = 0.12 + 0.95; // meters to center of cube(assuming it is on the shelf)
+    public final static double cameraPitch = 9 * Math.PI / 180; // radians
+    public final static double armLength = 1.12; // meters
     
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;
@@ -30,13 +31,13 @@ public class Constants {
     public static final double kMaxAccelerationMetersPerSecondSquared = 1;
 
     // Feedforward gains (Robot specific, calibrate according to: https://docs.wpilib.org/en/stable/docs/software/pathplanning/trajectory-tutorial/characterizing-drive.html)
-    public final static double ksVolts = 0.13131;//0.06663;
-    public final static double kvVoltSecondsPerMeter = 2.1269;//4.6181;
-    public final static double kaVoltSecondsSquaredPerMeter = 0.37915;//0.366066;
+    public final static double ksVolts = 0.08642;//0.09973;//0.13131;
+    public final static double kvVoltSecondsPerMeter = 2.1822;//2.1491;//2.1269;
+    public final static double kaVoltSecondsSquaredPerMeter = 0.1413;//0.16595;//0.37915;
 
     // Feedback gains (Robot specific, calibrate as above)
     //public final static double kPDriveVel = 1.2122;
-     public final static double kPDriveVel = 1.1291;//0.93744;
+    public final static double kPDriveVel = 0.17305;//0.29573;//1.1291;;
 
     // Reasonable baseline values for a RAMSETE follower in units of meters and seconds
     public static final double kRamseteB = 2;
@@ -48,5 +49,6 @@ public class Constants {
     public static double kdStabilization = 0;
 
     public static int BalanceRobotBttn = 2;
-    public static int ConeButton = 10;
+    public static int DriveToObjBttn = 10;
+    public static int OpenClawBttn = 1;
 }
