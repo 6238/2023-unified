@@ -15,15 +15,15 @@ import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.SmartDashboardParam;
 
 public class DriveSubsystem extends SubsystemBase {
-	private final SmartDashboardParam currentLimit = new SmartDashboardParam("currentLimiter", 16); // 0.18
-
 	private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
     private final WPI_TalonFX talonLeftFollowerOne = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_ONE);
     private final WPI_TalonFX talonLeftFollowerTwo = new WPI_TalonFX(Constants.LEFT_FOLLOWER_ID_TWO);
@@ -39,10 +39,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final DifferentialDriveOdometry m_odometry;
 
-	private final int PID_ID;
-
 	public DriveSubsystem() {
-		PID_ID = 0;
 		talonLeftLeader.configAllSettings(new TalonFXConfiguration());
 		talonLeftFollowerOne.configAllSettings(new TalonFXConfiguration());
 		talonLeftFollowerTwo.configAllSettings(new TalonFXConfiguration());
@@ -50,35 +47,31 @@ public class DriveSubsystem extends SubsystemBase {
 		talonRightFollowerOne.configAllSettings(new TalonFXConfiguration());
 		talonRightFollowerTwo.configAllSettings(new TalonFXConfiguration());
 
-        talonLeftFollowerOne.follow(talonLeftLeader);
-        talonLeftFollowerTwo.follow(talonLeftLeader);
+		talonLeftLeader.configOpenloopRamp(Constants.rampRate);
+		talonLeftFollowerOne.configOpenloopRamp(Constants.rampRate);
+		talonLeftFollowerTwo.configOpenloopRamp(Constants.rampRate);
+		talonRightLeader.configOpenloopRamp(Constants.rampRate);
+		talonRightFollowerOne.configOpenloopRamp(Constants.rampRate);
+		talonRightFollowerTwo.configOpenloopRamp(Constants.rampRate);
 
-        talonRightFollowerOne.follow(talonRightLeader);
-        talonRightFollowerTwo.follow(talonRightLeader);
+    talonLeftFollowerOne.follow(talonLeftLeader);
+    talonLeftFollowerTwo.follow(talonLeftLeader);
+    talonRightFollowerOne.follow(talonRightLeader);
+    talonRightFollowerTwo.follow(talonRightLeader);
+    
+    talonRightLeader.setInverted(true);
+    talonRightFollowerOne.setInverted(true);
+    talonRightFollowerTwo.setInverted(true);
 
-        talonRightLeader.setInverted(true);
-        talonRightFollowerOne.setInverted(true);
-        talonRightFollowerTwo.setInverted(true);
+    talonLeftLeader.setNeutralMode(NeutralMode.Brake);
+    talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
+    talonLeftFollowerTwo.setNeutralMode(NeutralMode.Brake);
+    talonRightLeader.setNeutralMode(NeutralMode.Brake);
+    talonRightFollowerOne.setNeutralMode(NeutralMode.Brake);
+    talonRightFollowerTwo.setNeutralMode(NeutralMode.Brake);
 
-        talonLeftLeader.setNeutralMode(NeutralMode.Brake);
-        talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
-        talonLeftFollowerTwo.setNeutralMode(NeutralMode.Brake);
-        talonRightLeader.setNeutralMode(NeutralMode.Brake);
-        talonRightFollowerOne.setNeutralMode(NeutralMode.Brake);
-        talonRightFollowerTwo.setNeutralMode(NeutralMode.Brake);
-
-        //talonLeftLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
-        //talonRightLeader.configSelectedFeedbackSensor(TalonFXFeedbackDevice.IntegratedSensor, PID_ID, 0);
-
-      	/*talonLeftLeader.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonLeftFollowerOne.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonLeftFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonRightLeader.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonRightFollowerOne.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-        talonRightFollowerTwo.configStatorCurrentLimit(new StatorCurrentLimitConfiguration(true, currentLimit.get(), 0, 0));
-*/
 		resetEncoders();
-		ahrs.zeroYaw();
+		zeroGyroAngle();
 
 		SmartDashboard.putBoolean("Brakes", true);
 		setBraking(true);
@@ -89,19 +82,13 @@ public class DriveSubsystem extends SubsystemBase {
 	@Override
 	public void periodic() {
 		m_odometry.update(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()));
-		
-		// For Testing Purposes
 		SmartDashboard.putNumber("X Position", Math.floor(getPose().getX()*1000)/1000);
-        SmartDashboard.putNumber("Y Position", Math.floor(getPose().getY()*1000)/1000);
-        SmartDashboard.putNumber("Angle Position", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
+    SmartDashboard.putNumber("Y Position", Math.floor(getPose().getY()*1000)/1000);
+    SmartDashboard.putNumber("Angle Position", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
 		SmartDashboard.putNumber("X Position Graph", Math.floor(getPose().getX()*1000)/1000);
 		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
-        SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
-		SmartDashboard.putNumber("Pitch Angle", ahrs.getPitch());
-		// For Testing Purposes
-
-		boolean braking = SmartDashboard.getBoolean("Brakes", true);
-		setBraking(braking);
+    SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
+		SmartDashboard.putNumber("Pitch Angle", getPitch());
 	}
 
 	public void arcadeDrive(double fwd, double rot) {
@@ -109,26 +96,45 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	private double nativeUnitsToDistanceMeters(double sensorCounts){
-        double motorRotations = sensorCounts / Constants.kCountsPerRev;
-        double wheelRotations = motorRotations / Constants.kGearRatio;
-        double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.kWheelRadiusInches));
+      double motorRotations = sensorCounts / Constants.kCountsPerRev;
+      double wheelRotations = motorRotations / Constants.kGearRatio;
+      double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.kWheelRadiusInches));
 
-        return positionMeters * 2.5106;
-    }
+      return positionMeters * 2.5106;
+  }
+
+	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+		return new DifferentialDriveWheelSpeeds(nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorVelocity()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorVelocity()));
+	}
+
+	public double getPosition() {
+		double position = nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorPosition() / 2 + talonRightLeader.getSelectedSensorPosition() / 2);
+        return position;
+	}
 
 	public Pose2d getPose() {
 		return m_odometry.getPoseMeters();
 	}
 
 	public void tankDriveVolts(double leftVolts, double rightVolts) {
-		talonLeftLeader.setVoltage(-leftVolts);
-		talonRightLeader.setVoltage(-rightVolts);
+		SmartDashboard.putNumber("Right Volts - Left Volts", rightVolts - leftVolts);
+		SmartDashboard.putNumber("Right Volts", rightVolts);
+		SmartDashboard.putNumber("Left Volts",leftVolts);
+		talonLeftLeader.setVoltage(leftVolts);
+		talonRightLeader.setVoltage(rightVolts);
 		robotDrive.feed();
 	}
 
+	public double getHeading() {
+		return ahrs.getRotation2d().getDegrees();
+	}
+
+	public double getAngle() {
+        return Math.IEEEremainder(ahrs.getAngle(), 360);
+    }
+
 	public void resetOdometry(Pose2d pose) {
 		resetEncoders();
-		ahrs.zeroYaw();
 		m_odometry.resetPosition(
 			ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()), pose);
 	}	
@@ -142,15 +148,15 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void resetEncoders() {
-		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition(); // J.T. 2023-03-04 not sure that these should be "+=" instead of "="
-		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition(); // J.t. 2023-03-04 not sure that these should be "+=" instead of "="
+		leftEncoderOffset += talonLeftLeader.getSelectedSensorPosition();
+		rightEncoderOffset += talonRightLeader.getSelectedSensorPosition();
 	}
 
 	public double getPitch() {
-		return ahrs.getPitch();
+		return ahrs.getRoll();
 	}
 
-	private void setBraking(boolean braking) {
+	public void setBraking(boolean braking) {
 		if(braking) {
 			talonLeftLeader.setNeutralMode(NeutralMode.Brake);
 			talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
@@ -168,8 +174,24 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 	}
 
-	public Pose2d getPoseToObject() {
-		Pose2d pose = m_odometry.getPoseMeters();
-		return new Pose2d(pose.getX(), pose.getY(), pose.getRotation());
+	public void zeroGyroAngle() {
+        ahrs.zeroYaw();
+    }
+
+	public void calibrate() {
+		ahrs.calibrate();
 	}
+
+
+    public Command getTimedDrive(long timeMS, double power) {
+        final class Timer {
+            long setPoint;
+            public Timer(long timeMS) { this.setPoint = System.currentTimeMillis() + timeMS; }
+            public boolean isFinished() { return System.currentTimeMillis() >= setPoint; }
+        };
+        
+        Timer timer = new Timer(timeMS);
+        return run(() -> arcadeDrive(-power, 0))
+            .until(timer::isFinished).andThen(runOnce(()-> arcadeDrive(0, 0)));
+    }
 }

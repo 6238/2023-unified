@@ -13,7 +13,6 @@ public class ArmPresetCommand extends CommandBase {
         m_pulleyPositionTarget = pulleyPostionTarget;
         m_telescopePositionTarget = telescopePositionTarget;
         addRequirements(subsystem);
-
     }
 
     @Override

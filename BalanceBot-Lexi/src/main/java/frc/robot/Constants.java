@@ -10,6 +10,9 @@ public class Constants {
     public final static int RIGHT_FOLLOWER_ID_ONE = 32;
     public final static int RIGHT_FOLLOWER_ID_TWO = 34;
 
+    public final static int pulleyID = 1;
+    public final static int telescopeID = 2;
+
     public final static int CameraResolutionWidth = 180;
     public final static int CameraResolutionHeight = 320;
     public final static double cameraHeight = 0.57; // meters
@@ -48,7 +51,14 @@ public class Constants {
     public static double kiStabilization = 0;
     public static double kdStabilization = 0;
 
-    public static int BalanceRobotBttn = 2;
-    public static int DriveToObjBttn = 10;
-    public static int OpenClawBttn = 1;
+    public final static int raiseArmBttn = 12;
+    public final static int lowerArmBttn = 10;
+    public final static int extendArmBttn = 9;
+    public final static int retractArmBttn = 11;
+    public static final int OpenClawBttn = 1;
+    public final static int HomeBttn = 5;
+    public final static int ShelfBttn = 6;
+    public final static int GridHighBttn = 3;
+    public final static int GridMidBttn = 4;
+    public final static int GridLowBttn = 2;
 }
