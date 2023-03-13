@@ -190,10 +190,10 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public Command getBalanceCommand(double minVoltage, double maxVoltage, double delayThresholdDegPerS) {
 		final double maxPitch = 20.0;
-		MathUtil.SpeedGetter getter = new MathUtil.SpeedGetter(getPitch());
+		MathUtil.SpeedGetter speedGetter = new MathUtil.SpeedGetter(() -> {return getPitch();});
 
 		Supplier<Double> fwd = () -> {
-			return getter.get(getPitch()) > delayThresholdDegPerS ? 0 :
+			return speedGetter.get() > delayThresholdDegPerS ? 0 :
 				(getPitch() < 0 ?
 					MathUtil.scale(-getPitch(), 0, maxPitch, minVoltage, maxVoltage, 1.5) :
 						MathUtil.scale(getPitch(), -maxPitch, 0, -maxVoltage, -minVoltage, 1.5));
