@@ -10,6 +10,13 @@ public class Constants {
     public final static int RIGHT_FOLLOWER_ID_ONE = 32;
     public final static int RIGHT_FOLLOWER_ID_TWO = 34;
 
+    public final static double rampRate = 0.2;
+
+    public final static double armThetaPerCount = 0.0;
+    public final static double telescopeMetersPerCount = 0.0;
+    public final static double armLengthAtGrab = 0.0;
+    public final static double thetaAtGrab = 0.0;
+
     public final static int pulleyID = 1;
     public final static int telescopeID = 2;
 
@@ -19,7 +26,9 @@ public class Constants {
     public final static double coneHeight = 0.165 + 0.95; // meters to center of cone(assuming it is on the shelf)
     public final static double cubeHeight = 0.12 + 0.95; // meters to center of cube(assuming it is on the shelf)
     public final static double cameraPitch = 9 * Math.PI / 180; // radians
-    public final static double armLength = 1.12; // meters
+
+    public final static int pulleyGearRatio = 10;
+    public final static int telescopeGearRatio = 3;
     
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;
@@ -56,9 +65,11 @@ public class Constants {
     public final static int extendArmBttn = 9;
     public final static int retractArmBttn = 11;
     public static final int OpenClawBttn = 1;
-    public final static int HomeBttn = 5;
-    public final static int ShelfBttn = 6;
+    public final static int HomeBttn = 8;
+    public final static int ShelfBttn = 5;
     public final static int GridHighBttn = 3;
     public final static int GridMidBttn = 4;
-    public final static int GridLowBttn = 2;
+    public final static int GridLowBttn = 6;
+    public final static int BalanceBttn = 2;
+    public final static int SlowBttn = 7;
 }
