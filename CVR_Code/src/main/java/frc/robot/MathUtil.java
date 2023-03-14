@@ -3,8 +3,8 @@ package frc.robot;
 import java.util.function.Supplier;
 
 public final class MathUtil {
-    public static double scale(double input, double minX, double maxX, double minY, double maxY, double power) {
-        return minY + Math.pow((input - minX) / (maxX - minX) , power) * (maxY - minY);
+    public static double scale(double input, double minIn, double maxIn, double minOut, double maxOut, double power) {
+        return minOut + (Math.pow(input, power) - minIn) / (maxIn - minIn) * (maxOut - minOut);
     }
 
     public static class DecimalChange {
