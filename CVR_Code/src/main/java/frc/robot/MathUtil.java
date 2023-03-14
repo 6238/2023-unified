@@ -11,6 +11,10 @@ public final class MathUtil {
             value = init;
         }
 
+        public void reset(double init) {
+            value = init;
+        }
+
         public double get(double newValue) {
             double change = newValue - value;
             value = newValue;
@@ -21,6 +25,10 @@ public final class MathUtil {
     public static class IntegerChange {
         long value;
         public IntegerChange(long init) {
+            value = init;
+        }
+
+        public void reset(long init) {
             value = init;
         }
 
@@ -37,6 +45,11 @@ public final class MathUtil {
         public SpeedGetter(double initPosition) {
             positionChange = new DecimalChange(initPosition);
             timeChange = new IntegerChange(System.currentTimeMillis());
+        }
+
+        public void reset(double position) {
+            positionChange.reset(position);
+            timeChange.reset(System.currentTimeMillis());
         }
 
         public double get(double newPosition) {
