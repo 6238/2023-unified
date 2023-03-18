@@ -27,6 +27,7 @@ public class ArmManualCommand extends CommandBase {
         int raiseRate = 0;
         int extendRate = 0;
 
+        
         if(raise && !lower) {
             raiseRate = 1;
         } else if(!raise && lower) {

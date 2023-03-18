@@ -79,7 +79,7 @@ public class RobotContainer {
             .onTrue(new ArmPresetCommand(armSubsystem, 64.4, 29.2));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
-            .whileTrue(driveSubsystem.getBalanceCommand(0.25, 0.55, 2));
+            .whileTrue(driveSubsystem.getBalanceCommand(0.25, 0.4, 2));
 
         new JoystickButton(joystick, Constants.SlowBttn)
             .whileTrue(new SlowDriveCommand(driveSubsystem, joystick));
