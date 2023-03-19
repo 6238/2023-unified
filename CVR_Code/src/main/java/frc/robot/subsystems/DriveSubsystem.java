@@ -8,14 +8,21 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
+
+import java.util.function.Supplier;
+
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
+
+import frc.robot.MathUtil;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -34,6 +41,8 @@ public class DriveSubsystem extends SubsystemBase {
 	private final AHRS ahrs = new AHRS(SPI.Port.kMXP);
 
 	private final DifferentialDriveOdometry m_odometry;
+
+	private int counter = 0;
 
 	public DriveSubsystem() {
 		talonLeftLeader.configAllSettings(new TalonFXConfiguration());
@@ -177,5 +186,38 @@ public class DriveSubsystem extends SubsystemBase {
 
 	public void calibrate() {
 		ahrs.calibrate();
+	}
+
+	public Command getTimedDrive(long timeMS, double power) {
+        final class Timer {
+            long setPoint;
+            public Timer() {}
+            public boolean isFinished() { return System.currentTimeMillis() >= setPoint; }
+        };
+        
+        Timer timer = new Timer();
+        return run(() -> arcadeDrive(power, 0))
+			.beforeStarting(Commands.runOnce(() -> {timer.setPoint = System.currentTimeMillis() + timeMS;}))
+            .until(timer::isFinished).andThen(runOnce(()-> arcadeDrive(0, 0)));
+    }
+
+    public Command getBalanceCommand(double minVoltage, double maxVoltage, double delayThresholdDegPerS, double degreeThreshold) {
+		final double maxPitch = 20.0;
+		MathUtil.SpeedGetter speedGetter = new MathUtil.SpeedGetter(() -> { return getPitch(); });
+
+		Supplier<Double> fwd = () -> {
+			return speedGetter.get() > delayThresholdDegPerS ? 0 :
+				MathUtil.scaleMagnitude(getPitch(), 0.0, maxPitch, minVoltage, maxVoltage, 1.5);
+		};
+
+		return run(() -> arcadeDrive(fwd.get(), 0)).until(() -> {
+			if(Math.abs(getPitch()) < degreeThreshold) {
+				counter++;
+			} else {
+				counter = 0;
+			}
+			return counter > 50;
+		}).andThen(Commands.runOnce(() -> {System.out.println("Stopped");}))
+		.andThen(Commands.run(() -> {arcadeDrive(0, 0);}));
 	}
 }

@@ -20,11 +20,11 @@ public class DriveCommand extends CommandBase{
     public void execute() {
         double x = joystick.getX();
         double y = joystick.getY();
-        x = (Math.abs(x) < 0.15) ? 0 : x;
-        y = (Math.abs(y) < 0.15) ? 0 : y;
+        x = (Math.abs(x) < 0.20) ? 0 : x;
+        y = (Math.abs(y) < 0.20) ? 0 : y;
 
-        x = MathUtil.scaleMagnitude(x, 0.15, 1.0, 0.3, 0.9, 2.0);
-        y = MathUtil.scaleMagnitude(y, 0.15, 1.0, 0.3, 1.0, 2.0);
+        x = MathUtil.scaleMagnitude(x, 0.20, 1.0, 0.3, 0.9, 2.0);
+        y = MathUtil.scaleMagnitude(y, 0.20, 1.0, 0.3, 1.0, 2.0);
         // x = Math.abs(x) * x;
         // y = Math.abs(y) * y;
         // if(x > 0) x = (x - 0.15) * 0.6 + 0.3;

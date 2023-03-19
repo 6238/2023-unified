@@ -81,7 +81,7 @@ public class RobotContainer {
             .onTrue(new ArmPresetCommand(armSubsystem, 64.4, 29.2));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
-            .whileTrue(commandFactory.getBalanceCommand(0.25, 0.4, 2));
+            .whileTrue(driveSubsystem.getBalanceCommand(0.25, 0.4, 2, 2));
 
         new JoystickButton(joystick, Constants.SlowBttn)
             .whileTrue(new SlowDriveCommand(driveSubsystem, joystick));
@@ -119,30 +119,23 @@ public class RobotContainer {
     }
 
     private Command autonomousTwo() {
-        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
-        // point1.add(new Pair<Double,Double>(-3.5,0.0));
-        return autonomousThree();
-        // return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-        //     // new ArmPresetCommand(armSubsystem, 66, 36.5),
-        //     // Commands.waitSeconds(0.1),
-        //     // Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
-        //     // Commands.waitSeconds(0.5),
-        //     // new HomeCommand(armSubsystem),
-        //     driveSubsystem.getTimedDrive(3000, -0.55));
-            //new TrajectoryCommand(driveSubsystem, point1, 0));
+        return new SequentialCommandGroup(new HomeCommand(armSubsystem),
+            new ArmPresetCommand(armSubsystem, 19.8, 36.5),
+            Commands.waitSeconds(0.1),
+            Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
+            Commands.waitSeconds(0.5),
+            new HomeCommand(armSubsystem),
+            driveSubsystem.getTimedDrive(2000, -0.5),
+            driveSubsystem.getBalanceCommand(0.25, 0.4, 2, 2));
     }
 
     private Command autonomousThree() {
-        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
-        // point1.add(new Pair<Double,Double>(-3.5,0.0));
-
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
             new ArmPresetCommand(armSubsystem, 64.4, 29.2),
             Commands.waitSeconds(0.1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem));
-            //new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
     public void setBraking(boolean braking) {

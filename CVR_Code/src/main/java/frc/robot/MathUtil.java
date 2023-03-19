@@ -20,7 +20,6 @@ public final class MathUtil {
 
         public double get() {
             double newVal = valGetter.get();
-            System.out.println("Old pitch: " + value + ", New Pitch: " + newVal);
             double change = newVal - value;
             value = newVal;
             return change;
@@ -37,7 +36,6 @@ public final class MathUtil {
 
         public double get() {
             long newVal = valGetter.get();
-            System.out.println("Old time: " + value + ", New time: " + newVal);
             long change = newVal - value;
             value = newVal;
             return change;
