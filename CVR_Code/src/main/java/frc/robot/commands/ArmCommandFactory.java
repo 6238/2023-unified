@@ -7,6 +7,7 @@ import java.util.function.Supplier;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Constants;
 import frc.robot.MathUtil;
 import frc.robot.subsystems.ArmSubsystem;
 
@@ -23,9 +24,10 @@ public class ArmCommandFactory {
 
     public Command getHomeCommand() {
         MathUtil.Timer timer = new MathUtil.Timer();
-
         return Commands.run(() -> {
-                armSubsystem.raiseArm(1); armSubsystem.extendTelescope(-1); }, armSubsystem)
+                armSubsystem.raiseArm(1);
+                armSubsystem.extendTelescope(-1);
+            }, armSubsystem)
             .beforeStarting(() ->
                 timer.start(500), armSubsystem)
             .until(() ->
@@ -33,6 +35,21 @@ public class ArmCommandFactory {
                 && armSubsystem.isPulleyStalled()
                 && armSubsystem.isTelescopeStalled())
             .andThen(armSubsystem::setStationary);
+    }
+
+    public Command ToggleClawCommand() {
+        MathUtil.Timer timer = new MathUtil.Timer();
+
+        return Commands.sequence(
+            Commands.runOnce(() ->
+                armSubsystem.toggleClaw(), armSubsystem),
+            Commands.waitSeconds(0.1),
+            Commands.runOnce(() -> timer.start(350), armSubsystem),
+            Commands.run(() -> {
+                armSubsystem.raiseArm(1);
+            }, armSubsystem)
+            .until(timer::isFinished),
+            getHomeCommand());
     }
 }
 
