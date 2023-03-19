@@ -8,12 +8,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 import com.ctre.phoenix.motorcontrol.can.TalonFXConfiguration;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
-
-import java.util.function.Supplier;
-
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.StatorCurrentLimitConfiguration;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import edu.wpi.first.wpilibj.SPI;
 import com.kauailabs.navx.frc.AHRS;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -21,12 +16,8 @@ import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.MathUtil;
-import frc.robot.SmartDashboardParam;
 
 public class DriveSubsystem extends SubsystemBase {
 	private final WPI_TalonFX talonLeftLeader = new WPI_TalonFX(Constants.LEFT_LEADER_ID);
@@ -187,30 +178,4 @@ public class DriveSubsystem extends SubsystemBase {
 	public void calibrate() {
 		ahrs.calibrate();
 	}
-
-	public Command getBalanceCommand(double minVoltage, double maxVoltage, double delayThresholdDegPerS) {
-		final double maxPitch = 20.0;
-		MathUtil.SpeedGetter speedGetter = new MathUtil.SpeedGetter(() -> {return getPitch();});
-
-		Supplier<Double> fwd = () -> {
-			return speedGetter.get() > delayThresholdDegPerS ? 0 :
-				(getPitch() < 0 ?
-					MathUtil.scale(-getPitch(), 0, maxPitch, minVoltage, maxVoltage, 1.5) :
-						MathUtil.scale(getPitch(), -maxPitch, 0, -maxVoltage, -minVoltage, 1.5));
-		};
-
-		return run(() ->arcadeDrive(fwd.get(), 0));
-	}
-
-    public Command getTimedDrive(long timeMS, double power) {
-        final class Timer {
-            long setPoint;
-            public Timer(long timeMS) { this.setPoint = System.currentTimeMillis() + timeMS; }
-            public boolean isFinished() { return System.currentTimeMillis() >= setPoint; }
-        };
-        
-        Timer timer = new Timer(timeMS);
-        return run(() -> arcadeDrive(-power, 0))
-            .until(timer::isFinished).andThen(runOnce(()-> arcadeDrive(0, 0)));
-    }
 }

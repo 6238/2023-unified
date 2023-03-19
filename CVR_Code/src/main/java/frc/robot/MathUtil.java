@@ -3,8 +3,11 @@ package frc.robot;
 import java.util.function.Supplier;
 
 public final class MathUtil {
-    public static double scale(double input, double minIn, double maxIn, double minOut, double maxOut, double power) {
-        return minOut + (Math.pow(input, power) - minIn) / (maxIn - minIn) * (maxOut - minOut);
+    public static double scaleMagnitude(double input, double minIn, double maxIn, double minOut, double maxOut, double power) {
+        if(Math.abs(input) < minIn) return 0;
+        return Math.signum(input) * edu.wpi.first.math.MathUtil.clamp(
+            minOut + Math.pow((Math.abs(input) - minIn) / (maxIn - minIn) , power) * (maxOut - minOut),
+            minOut, maxOut);
     }
 
     public static class DecimalChange {
@@ -17,6 +20,7 @@ public final class MathUtil {
 
         public double get() {
             double newVal = valGetter.get();
+            System.out.println("Old pitch: " + value + ", New Pitch: " + newVal);
             double change = newVal - value;
             value = newVal;
             return change;
@@ -33,6 +37,7 @@ public final class MathUtil {
 
         public double get() {
             long newVal = valGetter.get();
+            System.out.println("Old time: " + value + ", New time: " + newVal);
             long change = newVal - value;
             value = newVal;
             return change;
