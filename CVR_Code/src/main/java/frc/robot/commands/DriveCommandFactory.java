@@ -34,7 +34,7 @@ public class DriveCommandFactory {
     public Command getTimedDrive(long timeMS, double power) {
         MathUtil.Timer timer = new MathUtil.Timer();
         return Commands.run(() -> driveSubsystem.arcadeDrive(-power, 0), driveSubsystem)
-            .beforeStarting(Commands.run(() -> timer.start(timeMS), driveSubsystem))
+            .beforeStarting(Commands.runOnce(() -> timer.start(timeMS), driveSubsystem))
             .until(timer::isFinished).andThen(Commands.runOnce(()-> driveSubsystem.arcadeDrive(0, 0), driveSubsystem));
     }
 
