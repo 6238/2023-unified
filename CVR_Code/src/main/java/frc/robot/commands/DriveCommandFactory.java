@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.MathUtil;
-import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 public class DriveCommandFactory {
@@ -33,8 +32,9 @@ public class DriveCommandFactory {
 
 
     public Command getTimedDrive(long timeMS, double power) {
-        MathUtil.Timer timer = new MathUtil.Timer(timeMS);
+        MathUtil.Timer timer = new MathUtil.Timer();
         return Commands.run(() -> driveSubsystem.arcadeDrive(-power, 0), driveSubsystem)
+            .beforeStarting(Commands.run(() -> timer.start(timeMS), driveSubsystem))
             .until(timer::isFinished).andThen(Commands.runOnce(()-> driveSubsystem.arcadeDrive(0, 0), driveSubsystem));
     }
 

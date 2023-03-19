@@ -14,7 +14,8 @@ public final class MathUtil {
 
     public static class Timer {
         long setPoint;
-        public Timer(long timeMS) { this.setPoint = System.currentTimeMillis() + timeMS; }
+        public Timer() { this.setPoint = System.currentTimeMillis(); }
+        public void start(long timeMS) { this.setPoint = System.currentTimeMillis() + timeMS; };
         public boolean isFinished() { return System.currentTimeMillis() >= setPoint; }
     };
 
