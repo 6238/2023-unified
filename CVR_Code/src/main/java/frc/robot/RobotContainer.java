@@ -5,11 +5,9 @@
 package frc.robot;
 
 import frc.robot.commands.HomeCommand;
-import frc.robot.commands.SlowDriveCommand;
 import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
 import frc.robot.commands.CommandFactory;
-import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
@@ -31,7 +29,7 @@ public class RobotContainer {
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final Joystick joystick = new Joystick(0);
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private final CommandFactory commandFactory = new CommandFactory(driveSubsystem, armSubsystem);
+    private final CommandFactory commandFactory = new CommandFactory(driveSubsystem, armSubsystem, joystick);
     private SimpleWidget autoSelector;
 
     public RobotContainer() {
@@ -46,7 +44,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        driveSubsystem.setDefaultCommand(new DriveCommand(driveSubsystem, joystick));
+        driveSubsystem.setDefaultCommand(commandFactory.getManualDriveCommand());
 
         new JoystickButton(joystick, Constants.raiseArmBttn)
             .whileTrue(new ArmManualCommand(armSubsystem, joystick));
@@ -84,7 +82,7 @@ public class RobotContainer {
             .whileTrue(commandFactory.getBalanceCommand(0.25, 0.4, 2));
 
         new JoystickButton(joystick, Constants.SlowBttn)
-            .whileTrue(new SlowDriveCommand(driveSubsystem, joystick));
+            .whileTrue(commandFactory.getManualDriveSlowCommand());
     }
   
     public Command getAutonomousCommand() {

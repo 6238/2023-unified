@@ -13,11 +13,26 @@ import frc.robot.subsystems.DriveSubsystem;
 public class CommandFactory {
     private final DriveSubsystem driveSubsystem;
     private final ArmSubsystem armSubsystem;
+    private final Joystick joystick;
 
-    public CommandFactory(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem) {
+    public CommandFactory(DriveSubsystem driveSubsystem, ArmSubsystem armSubsystem, Joystick joystick) {
         this.driveSubsystem = driveSubsystem;
         this.armSubsystem = armSubsystem;
+        this.joystick = joystick;
     }
+
+    public Command getManualDriveCommand() {
+        Function<Double, Double> scaleRot = MathUtil.scaleMagnitude(0.15, 1.0, 0.3, 0.9, 2.0);
+        Function<Double, Double> scaleFwd = MathUtil.scaleMagnitude(0.15, 1.0, 0.3, 1.0, 2.0);
+        return Commands.run(() -> driveSubsystem.arcadeDrive(scaleFwd.apply(-joystick.getY()), scaleRot.apply(joystick.getX())));
+    }
+
+    public Command getManualDriveSlowCommand() {
+        Function<Double, Double> scaleRot = MathUtil.scaleMagnitude(0.15, 1.0, 0.25, 0.5, 2.0);
+        Function<Double, Double> scaleFwd = MathUtil.scaleMagnitude(0.15, 1.0, 0.25, 0.55, 2.0);
+        return Commands.run(() -> driveSubsystem.arcadeDrive(scaleFwd.apply(-joystick.getY()), scaleRot.apply(joystick.getX())));
+    }
+
 
     public Command getTimedDrive(long timeMS, double power) {
         final class Timer {
