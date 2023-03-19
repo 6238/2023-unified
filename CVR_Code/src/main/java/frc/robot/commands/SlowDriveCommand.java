@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import java.util.function.Function;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.MathUtil;
@@ -18,22 +20,15 @@ public class SlowDriveCommand extends CommandBase {
 
     @Override
     public void execute() {
+        Function<Double, Double> scaleRot = MathUtil.scaleMagnitude(0.15, 1.0, 0.25, 0.5, 2.0);
+        Function<Double, Double> scaleFwd = MathUtil.scaleMagnitude(0.15, 1.0, 0.25, 0.55, 2.0);
         double x = joystick.getX();
         double y = joystick.getY();
-        x = (Math.abs(x) < 0.15) ? 0 : x;
-        y = (Math.abs(y) < 0.15) ? 0 : y;
+        double rot = (Math.abs(x) < 0.15) ? 0 : x;
+        double fwd = (Math.abs(y) < 0.15) ? 0 : y;
 
-        x = MathUtil.scaleMagnitude(x, 0.15, 1.0, 0.25, 0.5, 2.0);
-        y = MathUtil.scaleMagnitude(y, 0.15, 1.0, 0.25, 0.55, 2);
-
-        // x = Math.abs(x) * x;
-        // y = Math.abs(y) * y;
-        // if(x > 0) x = (x - 0.15) * 0.25 + 0.25;
-        // if(y > 0) y = (y - 0.15) * 0.3 + 0.25;
-
-        // if(x < 0) x = (x + 0.15) * 0.25 - 0.25;
-        // if(y < 0) y = (y + 0.15) * 0.3 - 0.25;
-
-        driveSubsystem.arcadeDrive(-y, x);
+        rot = scaleRot.apply(x);
+        fwd = scaleFwd.apply(y);
+        driveSubsystem.arcadeDrive(-fwd, rot);
     }
 }

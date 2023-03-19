@@ -1,13 +1,15 @@
 package frc.robot;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
 public final class MathUtil {
-    public static double scaleMagnitude(double input, double minIn, double maxIn, double minOut, double maxOut, double power) {
-        if(Math.abs(input) < minIn) return 0;
-        return Math.signum(input) * edu.wpi.first.math.MathUtil.clamp(
-            minOut + Math.pow((Math.abs(input) - minIn) / (maxIn - minIn) , power) * (maxOut - minOut),
-            minOut, maxOut);
+    public static Function<Double, Double> scaleMagnitude(double minIn, double maxIn, double minOut, double maxOut, double power) {
+        return (input) ->
+            input < minIn ? 0 :
+            Math.signum(input) * edu.wpi.first.math.MathUtil.clamp(
+                minOut + Math.pow((Math.abs(input) - minIn) / (maxIn - minIn) , power) * (maxOut - minOut),
+                minOut, maxOut);
     }
 
     public static class DecimalChange {

@@ -1,7 +1,9 @@
 package frc.robot.commands;
 
+import java.util.function.Function;
 import java.util.function.Supplier;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.MathUtil;
@@ -25,19 +27,19 @@ public class CommandFactory {
         };
         
         Timer timer = new Timer(timeMS);
-        return Commands.run(() -> driveSubsystem.arcadeDrive(-power, 0))
+        return Commands.run(() -> driveSubsystem.arcadeDrive(-power, 0), driveSubsystem)
             .until(timer::isFinished).andThen(Commands.runOnce(()-> driveSubsystem.arcadeDrive(0, 0)));
     }
 
     public Command getBalanceCommand(double minVoltage, double maxVoltage, double delayThresholdDegPerS) {
 		final double maxPitch = 20.0;
 		MathUtil.SpeedGetter speedGetter = new MathUtil.SpeedGetter(() -> { return driveSubsystem.getPitch(); });
+        Function<Double, Double> scale = MathUtil.scaleMagnitude(0.0, maxPitch, minVoltage, maxVoltage, 1.5);
 
 		Supplier<Double> fwd = () -> {
-			return speedGetter.get() > delayThresholdDegPerS ? 0 :
-				MathUtil.scaleMagnitude(driveSubsystem.getPitch(), 0.0, maxPitch, minVoltage, maxVoltage, 1.5);
+			return speedGetter.get() > delayThresholdDegPerS ? 0 : scale.apply(driveSubsystem.getPitch());
 		};
 
-		return Commands.run(() -> driveSubsystem.arcadeDrive(fwd.get(), 0));
+		return Commands.run(() -> driveSubsystem.arcadeDrive(fwd.get(), 0), driveSubsystem);
 	}
 }
