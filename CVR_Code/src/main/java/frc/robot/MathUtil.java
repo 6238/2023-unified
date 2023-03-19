@@ -12,6 +12,12 @@ public final class MathUtil {
                 minOut, maxOut);
     }
 
+    public static class Timer {
+        long setPoint;
+        public Timer(long timeMS) { this.setPoint = System.currentTimeMillis() + timeMS; }
+        public boolean isFinished() { return System.currentTimeMillis() >= setPoint; }
+    };
+
     public static class DecimalChange {
         Supplier<Double> valGetter;
         double value;

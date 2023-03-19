@@ -33,13 +33,7 @@ public class DriveCommandFactory {
 
 
     public Command getTimedDrive(long timeMS, double power) {
-        final class Timer {
-            long setPoint;
-            public Timer(long timeMS) { this.setPoint = System.currentTimeMillis() + timeMS; }
-            public boolean isFinished() { return System.currentTimeMillis() >= setPoint; }
-        };
-        
-        Timer timer = new Timer(timeMS);
+        MathUtil.Timer timer = new MathUtil.Timer(timeMS);
         return Commands.run(() -> driveSubsystem.arcadeDrive(-power, 0), driveSubsystem)
             .until(timer::isFinished).andThen(Commands.runOnce(()-> driveSubsystem.arcadeDrive(0, 0), driveSubsystem));
     }
