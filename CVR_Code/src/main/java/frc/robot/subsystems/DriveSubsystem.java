@@ -159,7 +159,7 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public double getPitch() {
-		return -ahrs.getRoll();
+		return ahrs.getRoll();
 	}
 
 	public void setBraking(boolean braking) {
@@ -194,13 +194,11 @@ public class DriveSubsystem extends SubsystemBase {
 
 		Supplier<Double> fwd = () -> {
 			return speedGetter.get() > delayThresholdDegPerS ? 0 :
-				(getPitch() > 0 ?
-					MathUtil.scaleMagnitude(getPitch(), 0, maxPitch, minVoltage, maxVoltage, 1.5) :
-						MathUtil.scaleMagnitude(-getPitch(), 0, maxPitch, minVoltage, maxVoltage, 1.5));
+				MathUtil.scaleMagnitude(getPitch(), 0, maxPitch, minVoltage, maxVoltage, 1.5);
 		};
 
 		
-		return run(() -> System.out.println("Balance FWD Value: " + fwd.get() + "\nspeedGetter.get(): " + speedGetter.get()));
+		return run(() -> arcadeDrive(fwd.get(), 0));
 	}
 
     public Command getTimedDrive(long timeMS, double power) {
