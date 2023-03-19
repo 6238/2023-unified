@@ -5,6 +5,7 @@
 package frc.robot;
 
 import frc.robot.commands.HomeCommand;
+import frc.robot.commands.ArmCommandFactory;
 import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
 import frc.robot.commands.DriveCommandFactory;
@@ -29,7 +30,8 @@ public class RobotContainer {
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final Joystick joystick = new Joystick(0);
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private final DriveCommandFactory commandFactory = new DriveCommandFactory(driveSubsystem, joystick);
+    private final DriveCommandFactory driveCommandFactory = new DriveCommandFactory(driveSubsystem, joystick);
+    private final ArmCommandFactory armCommandFactory = new ArmCommandFactory(armSubsystem, joystick);
     private SimpleWidget autoSelector;
 
     public RobotContainer() {
@@ -44,7 +46,7 @@ public class RobotContainer {
     }
 
     private void configureBindings() {
-        driveSubsystem.setDefaultCommand(commandFactory.getManualDriveCommand());
+        driveSubsystem.setDefaultCommand(driveCommandFactory.getManualDriveCommand());
 
         new JoystickButton(joystick, Constants.raiseArmBttn)
             .whileTrue(new ArmManualCommand(armSubsystem, joystick));
@@ -62,27 +64,27 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> armSubsystem.toggleClaw()));
 
         new JoystickButton(joystick, Constants.HomeBttn)
-            .onTrue(new HomeCommand(armSubsystem));
+            .onTrue(armCommandFactory.getHomeCommand());
 
         new JoystickButton(joystick, Constants.ShelfBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 67.7, 35.6));
+            .onTrue(armCommandFactory.getArmPresetCommand(67.7, 35.6));
         
         // Old : Pulley (70.7), Telescope (98.2)
             new JoystickButton(joystick, Constants.GridHighBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 67.5, 97.6));
+            .onTrue(armCommandFactory.getArmPresetCommand(67.5, 97.6));
 
         new JoystickButton(joystick, Constants.GridLowBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 130, 0));
+            .onTrue(armCommandFactory.getArmPresetCommand(130, 0));
 
         // Old : Pulley (64.3), Telescope (18.7)
         new JoystickButton(joystick, Constants.GridMidBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 64.4, 29.2));
+            .onTrue(armCommandFactory.getArmPresetCommand(64.4, 29.2));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
-            .whileTrue(commandFactory.getBalanceCommand(0.25, 0.4, 2));
+            .whileTrue(driveCommandFactory.getBalanceCommand(0.25, 0.4, 2));
 
         new JoystickButton(joystick, Constants.SlowBttn)
-            .whileTrue(commandFactory.getManualDriveSlowCommand());
+            .whileTrue(driveCommandFactory.getManualDriveSlowCommand());
     }
   
     public Command getAutonomousCommand() {

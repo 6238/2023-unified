@@ -4,6 +4,7 @@ package frc.robot.commands;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.controller.BangBangController;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,6 +23,29 @@ public class ArmCommandFactory {
         this.joystick = joystick;
     }
 
+    public Command getArmPresetCommand(double pulleyPostionTarget, double telescopePositionTarget) {
+        BangBangController armController = new BangBangController(3);
+        BangBangController telescopeController = new BangBangController(3);
+        armController.setSetpoint(pulleyPostionTarget);
+        telescopeController.setSetpoint(telescopePositionTarget);
+
+        Supplier<Integer> telescopeDirection
+            = () -> -Double.compare(telescopePositionTarget, armSubsystem.getTelescopePosition()) ;
+        Supplier<Integer> pulleyDirection
+            = () -> Double.compare(pulleyPostionTarget, armSubsystem.getPulleyPosition());
+        
+        return Commands.run(() -> {
+            armSubsystem.raiseArm(pulleyDirection.get()
+                * armController.calculate(armSubsystem.getPulleyPosition()));
+            armSubsystem.extendTelescope(telescopeDirection.get()
+                * telescopeController.calculate(armSubsystem.getTelescopePosition()));
+        }, armSubsystem)
+        .until(() ->
+            armController.atSetpoint()
+            && telescopeController.atSetpoint()
+        );
+    }
+
     public Command getHomeCommand() {
         MathUtil.Timer timer = new MathUtil.Timer();
         return Commands.run(() -> {
@@ -34,7 +58,10 @@ public class ArmCommandFactory {
                 timer.isFinished()
                 && armSubsystem.isPulleyStalled()
                 && armSubsystem.isTelescopeStalled())
-            .andThen(armSubsystem::setStationary);
+            .andThen(() -> {
+                armSubsystem.setStationary();
+                armSubsystem.resetHome();
+            }, armSubsystem);
     }
 
     public Command ToggleClawCommand() {
@@ -52,5 +79,3 @@ public class ArmCommandFactory {
             getHomeCommand());
     }
 }
-
-
