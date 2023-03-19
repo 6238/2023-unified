@@ -67,7 +67,7 @@ public class RobotContainer {
             .onTrue(new HomeCommand(armSubsystem));
 
         new JoystickButton(joystick, Constants.ShelfBttn)
-            .onTrue(new ArmPresetCommand(armSubsystem, 67.7, 35.6));
+            .onTrue(new ArmPresetCommand(armSubsystem, 39.6, 39.3));
         
         // Old : Pulley (70.7), Telescope (98.2)
             new JoystickButton(joystick, Constants.GridHighBttn)

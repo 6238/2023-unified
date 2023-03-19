@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -21,6 +23,10 @@ public class ArmSubsystem extends SubsystemBase{
     private final RelativeEncoder pulleyEncoder;
     private double m_pulleyPositionHome;
     private double m_telescopePostionHome;
+
+    private int timer = 0;
+
+    private DigitalInput IRSensor = new DigitalInput(9);
 
     public ArmSubsystem() {
         solenoid = new Solenoid(5,PneumaticsModuleType.CTREPCM, 4);
@@ -70,12 +76,14 @@ public class ArmSubsystem extends SubsystemBase{
     
     public void toggleClaw() {
         System.out.println("Toggle Claw " + isSolenoidOn);
+        if(!isSolenoidOn) timer = 0;
         isSolenoidOn = !isSolenoidOn;
         solenoid.set(isSolenoidOn);
     }
 
     public void setClaw(boolean open) {
-        solenoid.set(open);
+        isSolenoidOn = open;
+        solenoid.set(isSolenoidOn);
     }
 
     public double getPulleyPosition(){
@@ -98,9 +106,6 @@ public class ArmSubsystem extends SubsystemBase{
         m_pulleyPositionHome = pulleyEncoder.getPosition();
         m_telescopePostionHome = telescopeEncoder.getPosition();
     }
-
-    
-
 
     @Override
     public void periodic() {
@@ -138,6 +143,12 @@ public class ArmSubsystem extends SubsystemBase{
 
         m_pulleyMotor.set(pulleySpeedLimited);
         m_telescopeMotor.set(telescopeSpeedLimited);
+
+        if(timer < 80) timer++;
+        SmartDashboard.putBoolean("IR Sensor", !IRSensor.get());
+        if(!IRSensor.get() && isSolenoidOn && timer == 80) {
+            setClaw(false);
+        }
         
         SmartDashboard.putNumber("Pulley Position", pulleyPosition);
         SmartDashboard.putNumber("Telescope Position", telescopePosition);
