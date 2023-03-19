@@ -48,6 +48,11 @@ public class ArmSubsystem extends SubsystemBase{
         telescopeEncoder.setAverageDepth(8);
     }
 
+    public void setStationary() {
+        m_pulleySpeed = 0;
+        m_telescopeSpeed = 0;
+    }
+
     // A positive rate raises the arm.
     // A negative rate lowers the arm.
     public void raiseArm(double rate) {
@@ -98,9 +103,6 @@ public class ArmSubsystem extends SubsystemBase{
         m_pulleyPositionHome = pulleyEncoder.getPosition();
         m_telescopePostionHome = telescopeEncoder.getPosition();
     }
-
-    
-
 
     @Override
     public void periodic() {
