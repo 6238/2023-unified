@@ -218,6 +218,6 @@ public class DriveSubsystem extends SubsystemBase {
 			}
 			return counter > 50;
 		}).andThen(Commands.runOnce(() -> {System.out.println("Stopped");}))
-		.andThen(Commands.run(() -> {arcadeDrive(0, 0);}));
+		.andThen(run(() -> {arcadeDrive(0, 0);}));
 	}
 }

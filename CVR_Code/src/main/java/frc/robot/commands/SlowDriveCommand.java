@@ -26,14 +26,6 @@ public class SlowDriveCommand extends CommandBase {
         x = MathUtil.scaleMagnitude(x, 0.20, 1.0, 0.25, 0.5, 2.0);
         y = MathUtil.scaleMagnitude(y, 0.20, 1.0, 0.25, 0.55, 2);
 
-        // x = Math.abs(x) * x;
-        // y = Math.abs(y) * y;
-        // if(x > 0) x = (x - 0.15) * 0.25 + 0.25;
-        // if(y > 0) y = (y - 0.15) * 0.3 + 0.25;
-
-        // if(x < 0) x = (x + 0.15) * 0.25 - 0.25;
-        // if(y < 0) y = (y + 0.15) * 0.3 - 0.25;
-
         driveSubsystem.arcadeDrive(-y, x);
     }
 }

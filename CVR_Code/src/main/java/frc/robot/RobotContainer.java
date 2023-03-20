@@ -8,13 +8,11 @@ import frc.robot.commands.HomeCommand;
 import frc.robot.commands.SlowDriveCommand;
 import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
-import frc.robot.commands.CommandFactory;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,8 +29,6 @@ public class RobotContainer {
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final Joystick joystick = new Joystick(0);
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private final CommandFactory commandFactory = new CommandFactory(driveSubsystem, armSubsystem);
-    private SimpleWidget autoSelector;
 
     public RobotContainer() {
         // SendableChooser<Integer> autoModeSelection = new SendableChooser<Integer>();
