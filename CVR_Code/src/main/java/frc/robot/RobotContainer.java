@@ -8,13 +8,11 @@ import frc.robot.commands.HomeCommand;
 import frc.robot.commands.SlowDriveCommand;
 import frc.robot.commands.ArmManualCommand;
 import frc.robot.commands.ArmPresetCommand;
-import frc.robot.commands.BalanceCommand;
 import frc.robot.commands.DriveCommand;
 import frc.robot.subsystems.ArmSubsystem;
 import frc.robot.subsystems.DriveSubsystem;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.shuffleboard.SimpleWidget;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -31,7 +29,6 @@ public class RobotContainer {
     private final ArmSubsystem armSubsystem = new ArmSubsystem();
     private final Joystick joystick = new Joystick(0);
     private final DriveSubsystem driveSubsystem = new DriveSubsystem();
-    private SimpleWidget autoSelector;
 
     public RobotContainer() {
         // SendableChooser<Integer> autoModeSelection = new SendableChooser<Integer>();
@@ -80,7 +77,7 @@ public class RobotContainer {
             .onTrue(new ArmPresetCommand(armSubsystem, 64.4, 29.2));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
-            .whileTrue(new BalanceCommand(driveSubsystem));
+            .whileTrue(driveSubsystem.getBalanceCommand(0.25, 0.4, 2, 2));
 
         new JoystickButton(joystick, Constants.SlowBttn)
             .whileTrue(new SlowDriveCommand(driveSubsystem, joystick));
@@ -118,30 +115,23 @@ public class RobotContainer {
     }
 
     private Command autonomousTwo() {
-        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
-        // point1.add(new Pair<Double,Double>(-3.5,0.0));
-        return autonomousThree();
-        // return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-        //     // new ArmPresetCommand(armSubsystem, 66, 36.5),
-        //     // Commands.waitSeconds(0.1),
-        //     // Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
-        //     // Commands.waitSeconds(0.5),
-        //     // new HomeCommand(armSubsystem),
-        //     driveSubsystem.getTimedDrive(3000, -0.55));
-            //new TrajectoryCommand(driveSubsystem, point1, 0));
+        return new SequentialCommandGroup(new HomeCommand(armSubsystem),
+            new ArmPresetCommand(armSubsystem, 19.8, 36.5),
+            Commands.waitSeconds(0.1),
+            Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
+            Commands.waitSeconds(0.5),
+            new HomeCommand(armSubsystem),
+            driveSubsystem.getTimedDrive(2000, -0.5),
+            driveSubsystem.getBalanceCommand(0.25, 0.4, 2, 2));
     }
 
     private Command autonomousThree() {
-        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
-        // point1.add(new Pair<Double,Double>(-3.5,0.0));
-
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
             new ArmPresetCommand(armSubsystem, 64.4, 29.2),
             Commands.waitSeconds(0.1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(0.5),
             new HomeCommand(armSubsystem));
-            //new TrajectoryCommand(driveSubsystem, point1, 0));
     }
 
     public void setBraking(boolean braking) {
