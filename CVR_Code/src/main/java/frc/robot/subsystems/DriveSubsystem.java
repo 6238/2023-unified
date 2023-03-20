@@ -59,22 +59,21 @@ public class DriveSubsystem extends SubsystemBase {
 		talonRightFollowerOne.configOpenloopRamp(Constants.rampRate);
 		talonRightFollowerTwo.configOpenloopRamp(Constants.rampRate);
 
-        talonLeftFollowerOne.follow(talonLeftLeader);
-        talonLeftFollowerTwo.follow(talonLeftLeader);
+    talonLeftFollowerOne.follow(talonLeftLeader);
+    talonLeftFollowerTwo.follow(talonLeftLeader);
+    talonRightFollowerOne.follow(talonRightLeader);
+    talonRightFollowerTwo.follow(talonRightLeader);
+    
+    talonRightLeader.setInverted(true);
+    talonRightFollowerOne.setInverted(true);
+    talonRightFollowerTwo.setInverted(true);
 
-        talonRightFollowerOne.follow(talonRightLeader);
-        talonRightFollowerTwo.follow(talonRightLeader);
-
-        talonRightLeader.setInverted(true);
-        talonRightFollowerOne.setInverted(true);
-        talonRightFollowerTwo.setInverted(true);
-
-        talonLeftLeader.setNeutralMode(NeutralMode.Brake);
-        talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
-        talonLeftFollowerTwo.setNeutralMode(NeutralMode.Brake);
-        talonRightLeader.setNeutralMode(NeutralMode.Brake);
-        talonRightFollowerOne.setNeutralMode(NeutralMode.Brake);
-        talonRightFollowerTwo.setNeutralMode(NeutralMode.Brake);
+    talonLeftLeader.setNeutralMode(NeutralMode.Brake);
+    talonLeftFollowerOne.setNeutralMode(NeutralMode.Brake);
+    talonLeftFollowerTwo.setNeutralMode(NeutralMode.Brake);
+    talonRightLeader.setNeutralMode(NeutralMode.Brake);
+    talonRightFollowerOne.setNeutralMode(NeutralMode.Brake);
+    talonRightFollowerTwo.setNeutralMode(NeutralMode.Brake);
 
 		resetEncoders();
 		zeroGyroAngle();
@@ -89,11 +88,11 @@ public class DriveSubsystem extends SubsystemBase {
 	public void periodic() {
 		m_odometry.update(ahrs.getRotation2d(), nativeUnitsToDistanceMeters(getLeftEncoder()), nativeUnitsToDistanceMeters(getRightEncoder()));
 		SmartDashboard.putNumber("X Position", Math.floor(getPose().getX()*1000)/1000);
-        SmartDashboard.putNumber("Y Position", Math.floor(getPose().getY()*1000)/1000);
-        SmartDashboard.putNumber("Angle Position", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
+    SmartDashboard.putNumber("Y Position", Math.floor(getPose().getY()*1000)/1000);
+    SmartDashboard.putNumber("Angle Position", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
 		SmartDashboard.putNumber("X Position Graph", Math.floor(getPose().getX()*1000)/1000);
 		SmartDashboard.putNumber("Y Position Graph", Math.floor(getPose().getY()*1000)/1000);
-        SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
+    SmartDashboard.putNumber("Angle Position Graph", Math.floor(getPose().getRotation().getDegrees()*1000)/1000);
 		SmartDashboard.putNumber("Pitch Angle", getPitch());
 	}
 
@@ -102,12 +101,12 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	private double nativeUnitsToDistanceMeters(double sensorCounts){
-        double motorRotations = sensorCounts / Constants.kCountsPerRev;
-        double wheelRotations = motorRotations / Constants.kGearRatio;
-        double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.kWheelRadiusInches));
+      double motorRotations = sensorCounts / Constants.kCountsPerRev;
+      double wheelRotations = motorRotations / Constants.kGearRatio;
+      double positionMeters = wheelRotations * (2 * Math.PI * Units.inchesToMeters(Constants.kWheelRadiusInches));
 
-        return positionMeters * 2.5106;
-    }
+      return positionMeters * 2.5106;
+  }
 
 	public DifferentialDriveWheelSpeeds getWheelSpeeds() {
 		return new DifferentialDriveWheelSpeeds(nativeUnitsToDistanceMeters(talonLeftLeader.getSelectedSensorVelocity()), nativeUnitsToDistanceMeters(talonRightLeader.getSelectedSensorVelocity()));
