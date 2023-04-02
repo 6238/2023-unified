@@ -22,6 +22,10 @@ public class ArmSubsystem extends SubsystemBase{
     private double m_pulleyPositionHome;
     private double m_telescopePostionHome;
 
+    private double pulleySetpoint;
+    private double telescopeSetpoint;
+    private boolean setpointModeOn;
+
     public ArmSubsystem() {
         solenoid = new Solenoid(5,PneumaticsModuleType.CTREPCM, 4);
         m_pulleyMotor = new CANSparkMax(Constants.pulleyID, MotorType.kBrushless);
@@ -99,49 +103,86 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopePostionHome = telescopeEncoder.getPosition();
     }
 
-    
+    public void deactivateSetpointMode() {
+        this.setpointModeOn = false;
+    }
 
+    public void activateSetpointMode(double pulleySetpoint, double telescopeSetpoint) {
+        this.setpointModeOn = true;
+        this.pulleySetpoint = pulleySetpoint;
+        this.telescopeSetpoint = telescopeSetpoint;
+    }
 
     @Override
     public void periodic() {
+        if (setpointModeOn) {
+            double pulleyPosition = getPulleyPosition();
+            double telescopePosition = getTelescopePosition();
+            double pulleySpeedLimited = m_pulleySpeed;
+            double telescopeSpeedLimited = m_telescopeSpeed;
+            
+            if (pulleyPosition>80 && telescopePosition>36){
+              if (telescopeSpeedLimited > 0){
+                    telescopeSpeedLimited = 0;
+                }
+                if (pulleySpeedLimited < 0) {
+                    pulleySpeedLimited = 0;
+                }
+            } 
+    
+            if (pulleyPosition<20 && telescopePosition>60){
+                if (telescopeSpeedLimited > 0){
+                    telescopeSpeedLimited = 0;
+                }
+                if (pulleySpeedLimited > 0) {
+                    pulleySpeedLimited = 0;
+                }
+            }
+            if (pulleyPosition>130){
+                if (pulleySpeedLimited < 0)
+                pulleySpeedLimited=0;
+            }
+            
+            if (telescopePosition>97) {
+                if (telescopeSpeedLimited>0)
+                telescopeSpeedLimited = 0;
+            }
+    
+            m_pulleyMotor.set(pulleySpeedLimited);
+            m_telescopeMotor.set(telescopeSpeedLimited);
+            
+            SmartDashboard.putNumber("Pulley Position", pulleyPosition);
+            SmartDashboard.putNumber("Telescope Position", telescopePosition);  
+        } else {
+            double pulleyPosition = getPulleyPosition();
+            double telescopePosition = getTelescopePosition();
+            double pulleyPositionSpeed = 0;
+            double telescopePositionSpeed = 0;
+            if (isPulleyPositionAtTarget()){
+                pulleyPositionSpeed = 0;
+            } else if (pulleySetpoint < pulleyPosition){
+                pulleyPositionSpeed = 1;
+            } else if (pulleySetpoint > pulleyPosition){
+                pulleyPositionSpeed = -1;
+            }
+            if (isTelescopePositionAtTarget()) {
+                telescopePosition =0;
+            } else if (telescopeSetpoint<telescopePosition){
+                telescopePositionSpeed = -1;
+            } else if (telescopeSetpoint>telescopePosition){
+                telescopePositionSpeed = 1;
+            }
+            raiseArm(pulleyPositionSpeed);
+            extendTelescope(telescopePositionSpeed);
+        }    
+    }
+
+    private boolean isPulleyPositionAtTarget(){
         double pulleyPosition = getPulleyPosition();
+        return Math.abs(pulleySetpoint-pulleyPosition)< 3;
+    }
+    private boolean isTelescopePositionAtTarget(){
         double telescopePosition = getTelescopePosition();
-        double pulleySpeedLimited = m_pulleySpeed;
-        double telescopeSpeedLimited = m_telescopeSpeed;
-        
-        if (pulleyPosition>80 && telescopePosition>36){
-          if (telescopeSpeedLimited > 0){
-                telescopeSpeedLimited = 0;
-            }
-            if (pulleySpeedLimited < 0) {
-                pulleySpeedLimited = 0;
-            }
-        } 
-
-        if (pulleyPosition<20 && telescopePosition>60){
-            if (telescopeSpeedLimited > 0){
-                telescopeSpeedLimited = 0;
-            }
-            if (pulleySpeedLimited > 0) {
-                pulleySpeedLimited = 0;
-            }
-        }
-        if (pulleyPosition>130){
-            if (pulleySpeedLimited < 0)
-            pulleySpeedLimited=0;
-        }
-        
-        if (telescopePosition>97) {
-            if (telescopeSpeedLimited>0)
-            telescopeSpeedLimited = 0;
-        }
-
-        m_pulleyMotor.set(pulleySpeedLimited);
-        m_telescopeMotor.set(telescopeSpeedLimited);
-        
-        SmartDashboard.putNumber("Pulley Position", pulleyPosition);
-        SmartDashboard.putNumber("Telescope Position", telescopePosition);
-        
+        return Math.abs(telescopeSetpoint-telescopePosition)< 3;
     }
-  
-    }
+  }
