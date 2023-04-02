@@ -137,7 +137,7 @@ public class ArmSubsystem extends SubsystemBase{
             }
         }
 
-        if (pulleyPosition>80 && telescopePosition>36){
+        if (pulleyPosition>80 / 3 && telescopePosition>36 / 3){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -146,7 +146,7 @@ public class ArmSubsystem extends SubsystemBase{
             }
         } 
 
-        if (pulleyPosition<20 && telescopePosition>60){
+        if (pulleyPosition<20 / 3 && telescopePosition>60 / 3){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -154,7 +154,7 @@ public class ArmSubsystem extends SubsystemBase{
                 pulleySpeedLimited = 0;
             }
         }
-        if (pulleyPosition>130){
+        if (pulleyPosition>130 / 3){
             if (pulleySpeedLimited < 0)
             pulleySpeedLimited=0;
         }
@@ -173,10 +173,10 @@ public class ArmSubsystem extends SubsystemBase{
 
     private boolean isPulleyPositionAtTarget(){
         double pulleyPosition = getPulleyPosition();
-        return Math.abs(pulleySetpoint-pulleyPosition)< 3;
+        return Math.abs(pulleySetpoint-pulleyPosition)< 1;
     }
     private boolean isTelescopePositionAtTarget(){
         double telescopePosition = getTelescopePosition();
-        return Math.abs(telescopeSetpoint-telescopePosition)< 3;
+        return Math.abs(telescopeSetpoint-telescopePosition)< 1;
     }
   }
