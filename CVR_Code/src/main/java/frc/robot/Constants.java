@@ -12,23 +12,8 @@ public class Constants {
 
     public final static double rampRate = 0.2;
 
-    public final static double armThetaPerCount = 0.0;
-    public final static double telescopeMetersPerCount = 0.0;
-    public final static double armLengthAtGrab = 0.0;
-    public final static double thetaAtGrab = 0.0;
-
     public final static int pulleyID = 1;
     public final static int telescopeID = 2;
-
-    public final static int CameraResolutionWidth = 180;
-    public final static int CameraResolutionHeight = 320;
-    public final static double cameraHeight = 0.57; // meters
-    public final static double coneHeight = 0.165 + 0.95; // meters to center of cone(assuming it is on the shelf)
-    public final static double cubeHeight = 0.12 + 0.95; // meters to center of cube(assuming it is on the shelf)
-    public final static double cameraPitch = 9 * Math.PI / 180; // radians
-
-    public final static int pulleyGearRatio = 10;
-    public final static int telescopeGearRatio = 3;
     
     public final static double kCountsPerRev = 2048;
     public final static double kGearRatio = 20;

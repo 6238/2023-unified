@@ -25,13 +25,6 @@ public class DriveCommand extends CommandBase{
 
         x = MathUtil.scaleMagnitude(x, 0.20, 1.0, 0.3, 0.9, 2.0);
         y = MathUtil.scaleMagnitude(y, 0.20, 1.0, 0.3, 1.0, 2.0);
-        // x = Math.abs(x) * x;
-        // y = Math.abs(y) * y;
-        // if(x > 0) x = (x - 0.15) * 0.6 + 0.3;
-        // if(y > 0) y = (y - 0.15) * 0.7 + 0.3;
-
-        // if(x < 0) x = (x + 0.15) * 0.6 - 0.3;
-        // if(y < 0) y = (y + 0.15) * 0.7 - 0.3;
 
         driveSubsystem.arcadeDrive(-y, x);
     }
