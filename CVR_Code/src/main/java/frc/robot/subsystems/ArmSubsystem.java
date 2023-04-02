@@ -186,10 +186,10 @@ public class ArmSubsystem extends SubsystemBase{
 
     private boolean isPulleyPositionAtTarget(){
         double pulleyPosition = getPulleyPosition();
-        return Math.abs(pulleySetpoint-pulleyPosition)< 1;
+        return Math.abs(pulleySetpoint-pulleyPosition)< 0.5;
     }
     private boolean isTelescopePositionAtTarget(){
         double telescopePosition = getTelescopePosition();
-        return Math.abs(telescopeSetpoint-telescopePosition)< 1;
+        return Math.abs(telescopeSetpoint-telescopePosition)< 0.5;
     }
   }
