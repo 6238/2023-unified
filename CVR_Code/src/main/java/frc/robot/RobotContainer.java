@@ -62,21 +62,21 @@ public class RobotContainer {
             .onTrue(new HomeCommand(armSubsystem));
 
         new JoystickButton(joystick, Constants.ShelfBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(67.7 / 3, 35.6),
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.33, 7.64), //updated with new values
             armSubsystem));
         
         // Old : Pulley (70.7), Telescope (98.2)
         new JoystickButton(joystick, Constants.GridHighBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(67.5 / 3, 97.6),
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(34.24, 39.81),
             armSubsystem));
 
         new JoystickButton(joystick, Constants.GridLowBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(130 / 3, 0),
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(130  / 3, 0),
             armSubsystem));
 
         // Old : Pulley (64.3), Telescope (18.7)
         new JoystickButton(joystick, Constants.GridMidBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(64.4 / 3, 29.2),
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(30.12, 7.24),
             armSubsystem));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
