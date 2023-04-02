@@ -26,14 +26,7 @@ public class ArmManualCommand extends CommandBase {
 
         int raiseRate = 0;
         int extendRate = 0;
-
-        if (!raise && !lower && !extend && !retract) {
-            armSubsystem.activateSetpointMode(armSubsystem.getPulleyPosition(),
-                armSubsystem.getTelescopePosition());
-        } else {
-            armSubsystem.deactivateSetpointMode();
-        }
-
+        
         if(raise && !lower) {
             raiseRate = 1;
         } else if(!raise && lower) {
@@ -50,6 +43,7 @@ public class ArmManualCommand extends CommandBase {
             extendRate = 0;
         }
 
+        armSubsystem.deactivateSetpointMode();
         armSubsystem.raiseArm(raiseRate);
         armSubsystem.extendTelescope(extendRate);
     }
@@ -58,5 +52,7 @@ public class ArmManualCommand extends CommandBase {
     public void end(boolean interrupt) {
         armSubsystem.resetPulley();
         armSubsystem.resetTelescope();
+        armSubsystem.activateSetpointMode(armSubsystem.getPulleyPosition(),
+            armSubsystem.getTelescopePosition());
     }
 }

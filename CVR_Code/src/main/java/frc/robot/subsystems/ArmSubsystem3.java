@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class ArmSubsystem extends SubsystemBase{
+public class ArmSubsystem3 extends SubsystemBase{
     private final Solenoid solenoid;
     private final CANSparkMax m_pulleyMotor;
     private final CANSparkMax m_telescopeMotor;
@@ -26,7 +26,7 @@ public class ArmSubsystem extends SubsystemBase{
     private double telescopeSetpoint;
     private boolean setpointModeOn;
 
-    public ArmSubsystem() {
+    public ArmSubsystem3() {
         solenoid = new Solenoid(5,PneumaticsModuleType.CTREPCM, 4);
         m_pulleyMotor = new CANSparkMax(Constants.pulleyID, MotorType.kBrushless);
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
@@ -121,6 +121,7 @@ public class ArmSubsystem extends SubsystemBase{
         double telescopeSpeedLimited = m_telescopeSpeed;
         
         if(setpointModeOn) {
+            System.out.println("Inside Threshold: " + isPulleyPositionAtTarget() + " Pulley Speed: " + pulleySpeedLimited);
             if (isPulleyPositionAtTarget()){
                 pulleySpeedLimited = 0;
             } else if (pulleySetpoint < pulleyPosition){
@@ -135,9 +136,11 @@ public class ArmSubsystem extends SubsystemBase{
             } else if (telescopeSetpoint>telescopePosition){
                 telescopeSpeedLimited = 1;
             }
+        } else {
+            System.out.println("Setpoint Mode Off");
         }
 
-        if (pulleyPosition>80 / 3 && telescopePosition>36){
+        if (pulleyPosition>80 / 3 && telescopePosition>36 / 3){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -146,7 +149,7 @@ public class ArmSubsystem extends SubsystemBase{
             }
         } 
 
-        if (pulleyPosition<20 / 3 && telescopePosition>60){
+        if (pulleyPosition<20 / 3 && telescopePosition>60 / 3){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -166,7 +169,7 @@ public class ArmSubsystem extends SubsystemBase{
 
         m_pulleyMotor.set(pulleySpeedLimited);
         m_telescopeMotor.set(telescopeSpeedLimited);
-        
+
         SmartDashboard.putNumber("Pulley Position", pulleyPosition);
         SmartDashboard.putNumber("Telescope Position", telescopePosition);     
     }
