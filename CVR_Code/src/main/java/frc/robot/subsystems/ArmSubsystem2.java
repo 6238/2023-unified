@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
-public class ArmSubsystem extends SubsystemBase{
+public class ArmSubsystem2 extends SubsystemBase{
     private final Solenoid solenoid;
     private final CANSparkMax m_pulleyMotor;
     private final CANSparkMax m_telescopeMotor;
@@ -26,12 +26,10 @@ public class ArmSubsystem extends SubsystemBase{
     private double telescopeSetpoint;
     private boolean setpointModeOn;
 
-    public ArmSubsystem() {
+    public ArmSubsystem2() {
         solenoid = new Solenoid(5,PneumaticsModuleType.CTREPCM, 4);
         m_pulleyMotor = new CANSparkMax(Constants.pulleyID, MotorType.kBrushless);
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
-        m_pulleySpeed = 0;
-        m_telescopeSpeed = 0;
         m_pulleyMotor.setSmartCurrentLimit(1,60);
         m_telescopeMotor.setSmartCurrentLimit(1,60);
         isSolenoidOn = false;
@@ -54,22 +52,28 @@ public class ArmSubsystem extends SubsystemBase{
 
     // A positive rate raises the arm.
     // A negative rate lowers the arm.
+    // A zero stops moving
     public void raiseArm(double rate) {
-        m_pulleySpeed = rate;
+        if(rate > 0) {
+            pulleySetpoint = 130;
+        } else if (rate < 0) {
+            pulleySetpoint = 0;
+        } else {
+            pulleySetpoint = getPulleyPosition();
+        }
     }
 
     // A positive rate extends the telescope.
     // A negative rate retracts the telescope.
+    // A zero stops moving
     public void extendTelescope(double rate) {
-        m_telescopeSpeed = rate;
-    }
-
-    public void resetPulley() {
-        m_pulleySpeed = 0;
-    }
-
-    public void resetTelescope() {
-        m_telescopeSpeed = 0;
+        if(rate > 0) {
+            telescopeSetpoint = 97;
+        } else if (rate < 0) {
+            telescopeSetpoint = 0;
+        } else {
+            telescopeSetpoint = getTelescopePosition();
+        }
     }
     
     public void toggleClaw() {
@@ -103,12 +107,7 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopePostionHome = telescopeEncoder.getPosition();
     }
 
-    public void deactivateSetpointMode() {
-        this.setpointModeOn = false;
-    }
-
-    public void activateSetpointMode(double pulleySetpoint, double telescopeSetpoint) {
-        this.setpointModeOn = true;
+    public void setTarget(double pulleySetpoint, double telescopeSetpoint) {
         this.pulleySetpoint = pulleySetpoint;
         this.telescopeSetpoint = telescopeSetpoint;
     }
@@ -117,27 +116,28 @@ public class ArmSubsystem extends SubsystemBase{
     public void periodic() {
         double pulleyPosition = getPulleyPosition();
         double telescopePosition = getTelescopePosition();
-        double pulleySpeedLimited = m_pulleySpeed;
-        double telescopeSpeedLimited = m_telescopeSpeed;
+        double pulleySpeedLimited;
+        double telescopeSpeedLimited;
         
-        if(setpointModeOn) {
-            if (isPulleyPositionAtTarget()){
-                pulleySpeedLimited = 0;
-            } else if (pulleySetpoint < pulleyPosition){
-                pulleySpeedLimited = 1;
-            } else if (pulleySetpoint > pulleyPosition){
-                pulleySpeedLimited = -1;
-            }
-            if (isTelescopePositionAtTarget()) {
-                telescopeSpeedLimited =0;
-            } else if (telescopeSetpoint<telescopePosition){
-                telescopeSpeedLimited = -1;
-            } else if (telescopeSetpoint>telescopePosition){
-                telescopeSpeedLimited = 1;
-            }
+        if(pulleyPosition > pulleySetpoint) {
+            pulleySpeedLimited = -1;
+        } else {
+            pulleySpeedLimited = 1;
+        }
+        if(isPulleyPositionAtTarget()) {
+            pulleySpeedLimited = 0;
         }
 
-        if (pulleyPosition>80 / 3 && telescopePosition>36){
+        if(telescopePosition > telescopeSetpoint) {
+            telescopeSpeedLimited = -1;
+        } else {
+            telescopeSpeedLimited = 1;
+        }
+        if(isTelescopePositionAtTarget()) {
+            telescopeSpeedLimited = 0;
+        }
+        
+        if (pulleyPosition>80 && telescopePosition>36){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -146,7 +146,7 @@ public class ArmSubsystem extends SubsystemBase{
             }
         } 
 
-        if (pulleyPosition<20 / 3 && telescopePosition>60){
+        if (pulleyPosition<20 && telescopePosition>60){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -154,7 +154,7 @@ public class ArmSubsystem extends SubsystemBase{
                 pulleySpeedLimited = 0;
             }
         }
-        if (pulleyPosition>130 / 3){
+        if (pulleyPosition>130){
             if (pulleySpeedLimited < 0)
             pulleySpeedLimited=0;
         }
@@ -168,7 +168,7 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopeMotor.set(telescopeSpeedLimited);
         
         SmartDashboard.putNumber("Pulley Position", pulleyPosition);
-        SmartDashboard.putNumber("Telescope Position", telescopePosition);     
+        SmartDashboard.putNumber("Telescope Position", telescopePosition);      
     }
 
     private boolean isPulleyPositionAtTarget(){

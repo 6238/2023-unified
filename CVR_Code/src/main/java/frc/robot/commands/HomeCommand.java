@@ -19,6 +19,7 @@ public class HomeCommand extends CommandBase {
 
   @Override
   public void initialize() {
+    m_subsystem.deactivateSetpointMode();
     startTime = System.currentTimeMillis();
   }
 
@@ -46,5 +47,6 @@ public class HomeCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_subsystem.raiseArm(0);
     m_subsystem.extendTelescope(0);
+    m_subsystem.activateSetpointMode(0,  0);
   }
 }
