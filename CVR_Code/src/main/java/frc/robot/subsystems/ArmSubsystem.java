@@ -131,8 +131,8 @@ public class ArmSubsystem extends SubsystemBase{
         if(setpointModeOn) {
             if (isPulleyPositionAtTarget()){
                 double error = pulleySetpoint - pulleyPosition;
-                pulleySpeedLimited = MathUtil.scaleMagnitude(error, 0.0, 1.0, 0.0, 1.0, 1.0);
-                pulleySpeedLimited -= 0.2;
+                pulleySpeedLimited = -MathUtil.scaleMagnitude(error, 0, 2.0, 0.0, 0.2, 1.0);
+                //pulleySpeedLimited -= 0.2;
             } 
             else if (pulleySetpoint < pulleyPosition){
                 pulleySpeedLimited = 1;
@@ -140,8 +140,7 @@ public class ArmSubsystem extends SubsystemBase{
                 pulleySpeedLimited = -1;
             }
             if (isTelescopePositionAtTarget()) {
-                double error = telescopeSetpoint - telescopePosition;
-                telescopeSpeedLimited = MathUtil.scaleMagnitude(error, 0.0, 1.0, 0.0, 1.0, 1.0);
+                telescopeSpeedLimited = 0;
             } else if (telescopeSetpoint<telescopePosition){
                 telescopeSpeedLimited = -1;
             } else if (telescopeSetpoint>telescopePosition){
@@ -191,7 +190,7 @@ public class ArmSubsystem extends SubsystemBase{
 
     private boolean isPulleyPositionAtTarget(){
         double pulleyPosition = getPulleyPosition();
-        return Math.abs(pulleySetpoint-pulleyPosition)< 1.0;
+        return Math.abs(pulleySetpoint-pulleyPosition)< 2.0;
     }
     private boolean isTelescopePositionAtTarget(){
         double telescopePosition = getTelescopePosition();
