@@ -30,7 +30,9 @@ public class ArmSubsystem extends SubsystemBase{
     private DigitalInput IRSensor = new DigitalInput(9);
     private double pulleySetpoint;
     private double telescopeSetpoint;
-    private boolean setpointModeOn;
+
+    private boolean setpointModeOnPulley;
+    private boolean setpointModeOnTelescope;
 
     public ArmSubsystem() {
         solenoid = new Solenoid(5,PneumaticsModuleType.CTREPCM, 4);
@@ -111,12 +113,28 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopePostionHome = telescopeEncoder.getPosition();
     }
 
-    public void deactivateSetpointMode() {
-        this.setpointModeOn = false;
+
+    public void deactivatePulleySetpoint() {
+        this.setpointModeOnPulley = false;
+    }
+
+    public void deactivateTelescopeSetpoint() {
+        this.setpointModeOnTelescope = false;
+    }
+
+    public void activateSetpointModePulley(double pulleySetpoint) {
+        this.setpointModeOnPulley = true;
+        this.pulleySetpoint = pulleySetpoint;
+    }
+
+    public void activateSetpointModeTelescope(double telescopeSetpoint) {
+        this.setpointModeOnTelescope = true;
+        this.telescopeSetpoint = telescopeSetpoint;
     }
 
     public void activateSetpointMode(double pulleySetpoint, double telescopeSetpoint) {
-        this.setpointModeOn = true;
+        this.setpointModeOnTelescope = true;
+        this.setpointModeOnPulley = true;
         this.pulleySetpoint = pulleySetpoint;
         this.telescopeSetpoint = telescopeSetpoint;
     }
@@ -128,7 +146,7 @@ public class ArmSubsystem extends SubsystemBase{
         double pulleySpeedLimited = m_pulleySpeed;
         double telescopeSpeedLimited = m_telescopeSpeed;
         
-        if(setpointModeOn) {
+        if(setpointModeOnPulley) {
             if (isPulleyPositionAtTarget()){
                 double error = pulleySetpoint - pulleyPosition;
                 pulleySpeedLimited = -MathUtil.scaleMagnitude(error, 0, 2.0, 0.0, 0.2, 1.0);
@@ -139,6 +157,9 @@ public class ArmSubsystem extends SubsystemBase{
             } else if (pulleySetpoint > pulleyPosition){
                 pulleySpeedLimited = -1;
             }
+        }
+
+        if (setpointModeOnTelescope) {
             if (isTelescopePositionAtTarget()) {
                 telescopeSpeedLimited = 0;
             } else if (telescopeSetpoint<telescopePosition){

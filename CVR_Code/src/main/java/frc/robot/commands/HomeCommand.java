@@ -19,7 +19,8 @@ public class HomeCommand extends CommandBase {
 
   @Override
   public void initialize() {
-    m_subsystem.deactivateSetpointMode();
+    m_subsystem.deactivatePulleySetpoint();
+    m_subsystem.deactivateTelescopeSetpoint();
     startTime = System.currentTimeMillis();
   }
 
@@ -47,6 +48,7 @@ public class HomeCommand extends CommandBase {
   public void end(boolean interrupted) {
     m_subsystem.raiseArm(0);
     m_subsystem.extendTelescope(0);
-    m_subsystem.activateSetpointMode(0,  0);
+    m_subsystem.activateSetpointModePulley(0);
+    m_subsystem.activateSetpointModeTelescope(0);
   }
 }
