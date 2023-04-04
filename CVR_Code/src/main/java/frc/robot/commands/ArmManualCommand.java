@@ -23,21 +23,21 @@ public class ArmManualCommand extends CommandBase {
         boolean extend = joystick.getRawButton(Constants.extendArmBttn);
         boolean retract = joystick.getRawButton(Constants.retractArmBttn);
 
-        int raiseRate = 0;
-        int extendRate = 0;
+        double raiseRate = 0;
+        double extendRate = 0;
         
         if(raise && !lower) {
-            raiseRate = 1;
+            raiseRate = 0.15;
         } else if(!raise && lower) {
-            raiseRate = -1;
+            raiseRate = -0.15;
         } else {
             raiseRate = 0;
         }
 
         if(extend && !retract) {
-            extendRate = 1;
+            extendRate = 0.2;
         } else if(!extend && retract) {
-            extendRate = -1;
+            extendRate = -0.4;
         } else {
             extendRate = 0;
         }

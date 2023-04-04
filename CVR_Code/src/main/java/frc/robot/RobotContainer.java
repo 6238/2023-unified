@@ -76,7 +76,7 @@ public class RobotContainer {
 
         // Old : Pulley (64.3), Telescope (18.7)
         new JoystickButton(joystick, Constants.GridMidBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.31, 9.98),
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(30.91, 10.17),
             armSubsystem));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
