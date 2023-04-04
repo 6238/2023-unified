@@ -40,8 +40,8 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
         m_pulleySpeed = 0;
         m_telescopeSpeed = 0;
-        m_pulleyMotor.setSmartCurrentLimit(1,60);
-        m_telescopeMotor.setSmartCurrentLimit(1,60);
+        m_pulleyMotor.setSmartCurrentLimit(2,4, 10);
+        m_telescopeMotor.setSmartCurrentLimit(2,4, 10);
         isSolenoidOn = false;
         solenoid.set(isSolenoidOn);
         m_pulleyPositionHome = 0;
@@ -196,6 +196,7 @@ public class ArmSubsystem extends SubsystemBase{
             telescopeSpeedLimited = 0;
         }
 
+        pulleySpeedLimited = edu.wpi.first.math.MathUtil.clamp(pulleySpeedLimited, -0.4, 0.7);
         m_pulleyMotor.set(pulleySpeedLimited);
         m_telescopeMotor.set(telescopeSpeedLimited);
 
