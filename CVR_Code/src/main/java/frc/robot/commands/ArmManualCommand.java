@@ -27,24 +27,25 @@ public class ArmManualCommand extends CommandBase {
         double extendRate = 0;
         
         if(raise && !lower) {
-            raiseRate = 0.15;
+            raiseRate = 0.15 / 3; // Divide by 3 for testing
         } else if(!raise && lower) {
-            raiseRate = -0.15;
+            raiseRate = -0.15 / 3; // Divide by 3 for testing
         } else {
             raiseRate = 0;
         }
 
         if(extend && !retract) {
-            extendRate = 0.2;
+            extendRate = 0.2 / 3; // Divide by 3 for testing
         } else if(!extend && retract) {
-            extendRate = -0.4;
+            extendRate = -0.4 / 3; // Divide by 3 for testing
         } else {
             extendRate = 0;
         }
 
-        if (raise || lower) {
+        if (raise || (lower && armSubsystem.canPulleyMoveDown())) {
             armSubsystem.deactivatePulleySetpoint();
-        } else if (extend || retract) {
+        }
+        if (extend || retract) {
             armSubsystem.deactivateTelescopeSetpoint();
         }
         
