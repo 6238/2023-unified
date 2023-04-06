@@ -4,19 +4,18 @@
 
 package frc.robot;
 
-import frc.robot.commands.HomeCommand;
-import frc.robot.commands.SlowDriveCommand;
-import frc.robot.commands.ArmManualCommand;
-import frc.robot.commands.DriveCommand;
-import frc.robot.subsystems.ArmSubsystem;
-import frc.robot.subsystems.DriveSubsystem;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import frc.robot.commands.ArmManualCommand;
+import frc.robot.commands.DriveCommand;
+import frc.robot.commands.HomeCommand;
+import frc.robot.commands.SlowDriveCommand;
+import frc.robot.subsystems.ArmSubsystem;
+import frc.robot.subsystems.DriveSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -87,7 +86,7 @@ public class RobotContainer {
     }
   
     public Command getAutonomousCommand() {
-        int mode = (int)SmartDashboard.getNumber("Auto Mode", 2); //autoSelector.getEntry().getInteger(0);
+        int mode = (int)SmartDashboard.getNumber("Auto Mode", 0); //autoSelector.getEntry().getInteger(0);
         switch(mode) {
             case 0:
                 return autonomousOne();
@@ -101,29 +100,20 @@ public class RobotContainer {
     }
 
     private Command autonomousOne() {
-        // LinkedList<Pair<Double,Double>> point1 = new LinkedList<Pair<Double,Double>>();
-        // point1.add(new Pair<Double,Double>(-2.2,0.0));
-        return autonomousTwo();
-        /*
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            new ArmPresetCommand(armSubsystem, 66, 36.5),
-            Commands.waitSeconds(0.1),
+            Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.31, 9.98) , armSubsystem),
+            Commands.waitSeconds(1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
-            Commands.waitSeconds(0.5),
-            new HomeCommand(armSubsystem),
-            driveSubsystem.getTimedDrive(1500, -0.65),
-            new BalanceCommand(driveSubsystem));
-            // new TrajectoryCommand(driveSubsystem, point1, 0));
-        */
+            Commands.waitSeconds(.5),
+            new HomeCommand(armSubsystem));
     }
 
     private Command autonomousTwo() {
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            Commands.runOnce(() -> armSubsystem.activateSetpointMode(19.8, 36.5),
-            armSubsystem),
-            Commands.waitSeconds(0.1),
+            Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.31, 9.98) , armSubsystem),
+            Commands.waitSeconds(1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
-            Commands.waitSeconds(0.5),
+            Commands.waitSeconds(.5),
             new HomeCommand(armSubsystem),
             driveSubsystem.getTimedDrive(2000, -0.5),
             driveSubsystem.getBalanceCommand(0.25, 0.4, 2, 2));
@@ -133,10 +123,11 @@ public class RobotContainer {
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
             Commands.runOnce(() -> armSubsystem.activateSetpointMode(64.4, 29.2),
             armSubsystem),
-            Commands.waitSeconds(0.1),
+            Commands.waitSeconds(1  ),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
-            Commands.waitSeconds(0.5),
-            new HomeCommand(armSubsystem));
+            Commands.waitSeconds(.5),
+            new HomeCommand(armSubsystem),
+            driveSubsystem.getTimedDrive(2500, -0.5));
     }
 
     public void setBraking(boolean braking) {
