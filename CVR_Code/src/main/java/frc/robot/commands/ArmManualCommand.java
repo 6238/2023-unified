@@ -23,28 +23,29 @@ public class ArmManualCommand extends CommandBase {
         boolean extend = joystick.getRawButton(Constants.extendArmBttn);
         boolean retract = joystick.getRawButton(Constants.retractArmBttn);
 
-        int raiseRate = 0;
-        int extendRate = 0;
+        double raiseRate = 0;
+        double extendRate = 0;
         
         if(raise && !lower) {
-            raiseRate = 1;
+            raiseRate = 0.15 / 3; // Divide by 3 for testing
         } else if(!raise && lower) {
-            raiseRate = -1;
+            raiseRate = -0.15 / 3; // Divide by 3 for testing
         } else {
             raiseRate = 0;
         }
 
         if(extend && !retract) {
-            extendRate = 1;
+            extendRate = 0.2 / 3; // Divide by 3 for testing
         } else if(!extend && retract) {
-            extendRate = -1;
+            extendRate = -0.4 / 3; // Divide by 3 for testing
         } else {
             extendRate = 0;
         }
 
-        if (raise || lower) {
+        if (raise || (lower && armSubsystem.canPulleyMoveDown())) {
             armSubsystem.deactivatePulleySetpoint();
-        } else if (extend || retract) {
+        }
+        if (extend || retract) {
             armSubsystem.deactivateTelescopeSetpoint();
         }
         

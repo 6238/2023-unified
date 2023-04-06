@@ -40,8 +40,8 @@ public class ArmSubsystem extends SubsystemBase{
         m_telescopeMotor = new CANSparkMax(Constants.telescopeID, MotorType.kBrushless);
         m_pulleySpeed = 0;
         m_telescopeSpeed = 0;
-        m_pulleyMotor.setSmartCurrentLimit(1,60);
-        m_telescopeMotor.setSmartCurrentLimit(1,60);
+        m_pulleyMotor.setSmartCurrentLimit(2,4, 10);
+        m_telescopeMotor.setSmartCurrentLimit(2,4, 10);
         isSolenoidOn = false;
         solenoid.set(isSolenoidOn);
         m_pulleyPositionHome = 0;
@@ -169,7 +169,7 @@ public class ArmSubsystem extends SubsystemBase{
             }
         }
 
-        if (pulleyPosition>80 / 3 && telescopePosition>36){
+        if (pulleyPosition>40.0 && telescopePosition > 10.0){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -178,7 +178,7 @@ public class ArmSubsystem extends SubsystemBase{
             }
         } 
 
-        if (pulleyPosition<20 / 3 && telescopePosition>60){
+        if (pulleyPosition < 15 && telescopePosition> 34){
             if (telescopeSpeedLimited > 0){
                 telescopeSpeedLimited = 0;
             }
@@ -186,16 +186,18 @@ public class ArmSubsystem extends SubsystemBase{
                 pulleySpeedLimited = 0;
             }
         }
-        if (pulleyPosition>130 / 3){
+
+        if (pulleyPosition> 55){
             if (pulleySpeedLimited < 0)
             pulleySpeedLimited=0;
         }
-        
-        if (telescopePosition>97) {
+
+        if (telescopePosition>41.0) {
             if (telescopeSpeedLimited>0)
             telescopeSpeedLimited = 0;
         }
 
+        pulleySpeedLimited = edu.wpi.first.math.MathUtil.clamp(pulleySpeedLimited, -0.4, 0.7);
         m_pulleyMotor.set(pulleySpeedLimited);
         m_telescopeMotor.set(telescopeSpeedLimited);
 
@@ -207,6 +209,11 @@ public class ArmSubsystem extends SubsystemBase{
         
         SmartDashboard.putNumber("Pulley Position", pulleyPosition);
         SmartDashboard.putNumber("Telescope Position", telescopePosition);     
+    }
+
+    // returns 1 if the pulley is allowed to move down
+    public boolean canPulleyMoveDown() {
+        return !(getPulleyPosition() > 35.0 && getTelescopePosition() > 10.0);
     }
 
     private boolean isPulleyPositionAtTarget(){
