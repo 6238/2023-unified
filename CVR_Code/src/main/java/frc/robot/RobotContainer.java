@@ -61,7 +61,7 @@ public class RobotContainer {
             .onTrue(new HomeCommand(armSubsystem));
 
         new JoystickButton(joystick, Constants.ShelfBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(31.24, 17.55), //updated with new values
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(35.81, 18.57), //updated with new values
             armSubsystem));
         
         // Old : Pulley (70.7), Telescope (98.2)
@@ -127,7 +127,7 @@ public class RobotContainer {
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(.5),
             new HomeCommand(armSubsystem),
-            driveSubsystem.getTimedDrive(2500, -0.5));
+            driveSubsystem.getTimedDrive(3500 , -0.5));
     }
 
     public void setBraking(boolean braking) {

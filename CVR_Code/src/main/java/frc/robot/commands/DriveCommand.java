@@ -23,7 +23,7 @@ public class DriveCommand extends CommandBase{
         x = (Math.abs(x) < 0.20) ? 0 : x;
         y = (Math.abs(y) < 0.20) ? 0 : y;
 
-        x = MathUtil.scaleMagnitude(x, 0.20, 1.0, 0.3, 0.9, 2.0);
+        x = MathUtil.scaleMagnitude(x, 0.20, 1.0, 0.3, 0.6, 2.0);
         y = MathUtil.scaleMagnitude(y, 0.20, 1.0, 0.3, 1.0, 2.0);
 
         driveSubsystem.arcadeDrive(-y, x);

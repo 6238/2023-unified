@@ -82,14 +82,17 @@ public class ArmSubsystem extends SubsystemBase{
     
     public void toggleClaw() {
         System.out.println("Toggle Claw " + isSolenoidOn);
-        if(!isSolenoidOn) timer = 0;
         isSolenoidOn = !isSolenoidOn;
+        if(isSolenoidOn) timer = 0;
         solenoid.set(isSolenoidOn);
     }
 
     public void setClaw(boolean open) {
         isSolenoidOn = open;
         solenoid.set(isSolenoidOn);
+        if(open) {
+            timer = 0;
+        }
     }
 
     public double getPulleyPosition(){
