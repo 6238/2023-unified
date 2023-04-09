@@ -61,12 +61,12 @@ public class RobotContainer {
             .onTrue(new HomeCommand(armSubsystem));
 
         new JoystickButton(joystick, Constants.ShelfBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(35.81, 18.57), //updated with new values
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(34.55, 18.57), //updated with new values
             armSubsystem));
         
         // Old : Pulley (70.7), Telescope (98.2)
         new JoystickButton(joystick, Constants.GridHighBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(34.24, 39.81),
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(29.64, 40.57),
             armSubsystem));
 
         new JoystickButton(joystick, Constants.GridLowBttn)
@@ -75,7 +75,7 @@ public class RobotContainer {
 
         // Old : Pulley (64.3), Telescope (18.7)
         new JoystickButton(joystick, Constants.GridMidBttn)
-            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(30.91, 10.17),
+            .onTrue(Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.40, 21.45),
             armSubsystem));
         
         new JoystickButton(joystick, Constants.BalanceBttn)
@@ -101,8 +101,8 @@ public class RobotContainer {
 
     private Command autonomousOne() {
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.31, 9.98) , armSubsystem),
-            Commands.waitSeconds(1),
+            Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.40, 21.45) , armSubsystem),
+            Commands.waitSeconds(1.5),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(.5),
             new HomeCommand(armSubsystem));
@@ -110,7 +110,7 @@ public class RobotContainer {
 
     private Command autonomousTwo() {
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.31, 9.98) , armSubsystem),
+            Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.40, 21.45) , armSubsystem),
             Commands.waitSeconds(1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(.5),
@@ -121,9 +121,9 @@ public class RobotContainer {
 
     private Command autonomousThree() {
         return new SequentialCommandGroup(new HomeCommand(armSubsystem),
-            Commands.runOnce(() -> armSubsystem.activateSetpointMode(64.4, 29.2),
+            Commands.runOnce(() -> armSubsystem.activateSetpointMode(28.40, 21.45),
             armSubsystem),
-            Commands.waitSeconds(1  ),
+            Commands.waitSeconds(1),
             Commands.runOnce(() -> {armSubsystem.setClaw(true);}),
             Commands.waitSeconds(.5),
             new HomeCommand(armSubsystem),
